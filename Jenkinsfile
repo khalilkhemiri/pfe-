@@ -10,7 +10,7 @@ pipeline {
   stages {
     stage('Checkout') {
       steps {
-        git credentialsId: 'github-token', url: 'https://github.com/khalilkhemiri/pfe-.git'
+        git branch: 'main', credentialsId: 'github-token', url: 'https://github.com/khalilkhemiri/pfe-.git'
       }
     }
 
@@ -18,7 +18,7 @@ pipeline {
       steps {
         dir('jwt-demo-main') {
           echo "🔧 Building Spring Boot backend..."
-          sh './mvnw clean install' // or 'mvn clean install' if no wrapper
+          sh './mvnw clean install' // or use 'mvn clean install' if mvnw doesn't exist
         }
       }
     }
@@ -51,7 +51,7 @@ pipeline {
           docker.withRegistry('https://index.docker.io/v1/', 'dockerhub') {
             def image = docker.build("${IMAGE_NAME}:${env.BUILD_NUMBER}")
             image.push()
-            image.push("latest") // optional but recommended
+            image.push("latest")
           }
         }
       }
