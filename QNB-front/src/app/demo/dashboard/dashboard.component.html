@@ -1,0 +1,298 @@
+<div class="row">
+  <!-- Quick Stats Widget -->
+  <div class="col-xl-12 mb-4">
+    <div class="row">
+      <div class="col-md-3">
+        <div class="card stat-card bg-primary-subtle">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h6 class="text-primary mb-1">Taux de Complétion</h6>
+                <h3 class="mb-0">{{ (stats.tachesTerminees / (stats.tachesEnCours + stats.tachesTerminees) * 100) | number:'1.0-0' }}%</h3>
+              </div>
+              <div class="stat-icon">
+                <i class="feather icon-trending-up text-primary"></i>
+              </div>
+            </div>
+            <div class="progress mt-3" style="height: 4px;">
+              <div class="progress-bar bg-primary" [style.width.%]="(stats.tachesTerminees / (stats.tachesEnCours + stats.tachesTerminees) * 100)"></div>
+          </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card stat-card bg-success-subtle">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h6 class="text-success mb-1">Stagiaires Actifs</h6>
+                <h3 class="mb-0">{{ stats.stagiairesActifs }}/{{ stats.totalStagiaires }}</h3>
+        </div>
+              <div class="stat-icon">
+                <i class="feather icon-users text-success"></i>
+    </div>
+            </div>
+            <div class="progress mt-3" style="height: 4px;">
+              <div class="progress-bar bg-success" [style.width.%]="(stats.stagiairesActifs / stats.totalStagiaires * 100)"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card stat-card bg-warning-subtle">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h6 class="text-warning mb-1">Tâches en Cours</h6>
+                <h3 class="mb-0">{{ stats.tachesEnCours }}</h3>
+    </div>
+              <div class="stat-icon">
+                <i class="feather icon-clock text-warning"></i>
+  </div>
+            </div>
+            <div class="progress mt-3" style="height: 4px;">
+              <div class="progress-bar bg-warning" [style.width.%]="(stats.tachesEnCours / (stats.tachesEnCours + stats.tachesTerminees) * 100)"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card stat-card bg-info-subtle">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h6 class="text-info mb-1">Tâches Terminées</h6>
+                <h3 class="mb-0">{{ stats.tachesTerminees }}</h3>
+              </div>
+              <div class="stat-icon">
+                <i class="feather icon-check-circle text-info"></i>
+              </div>
+            </div>
+            <div class="progress mt-3" style="height: 4px;">
+              <div class="progress-bar bg-info" [style.width.%]="(stats.tachesTerminees / (stats.tachesEnCours + stats.tachesTerminees) * 100)"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Statistiques Cards -->
+  @for (stat of statsCards; track stat) {
+    <div class="{{ stat.design }} col-xl-3">
+      <app-card [hidHeader]="true">
+        <h6 class="mb-4">{{ stat.title }}</h6>
+        <div class="row d-flex align-items-center">
+          <div class="col-9">
+            <h3 class="f-w-300 d-flex align-items-center m-b-0">
+              <i class="feather {{ stat.icon }} f-30 m-r-10"></i>
+              {{ stat.amount }}
+            </h3>
+          </div>
+          <div class="col-3 text-end">
+            <p class="m-b-0">{{ stat.percentage }}</p>
+          </div>
+        </div>
+        <div class="m-t-30">
+          <ngb-progressbar type="progress-bar {{ stat.progress_bg }}" height="7px" [value]="stat.progress"></ngb-progressbar>
+        </div>
+      </app-card>
+          </div>
+        }
+
+  <!-- Liste des Stagiaires -->
+  <div class="col-xl-12">
+    <app-card cardTitle="Mes Stagiaires" cardClass="Recent-Users table-card" blockClass="p-0">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th class="border-0">Stagiaire</th>
+              <th class="border-0">Email</th>
+              <th class="border-0">Téléphone</th>
+              <th class="border-0">Statut</th>
+              <th class="border-0">Tâches</th>
+              <th class="border-0 text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (stagiaire of stagiaires; track stagiaire) {
+              <tr>
+                <td>
+                  <div class="d-flex align-items-center">
+                    <img [src]="stagiaire.image || 'assets/images/avatars/default.jpg'" 
+                         class="rounded-circle" 
+                         style="width: 45px; height: 45px; object-fit: cover; box-shadow: 0 2px 4px rgba(0,0,0,0.1);"
+                         [alt]="stagiaire.username">
+                    <div class="ms-3">
+                      <h6 class="mb-1 fw-semibold">{{ stagiaire.username }}</h6>
+                      <span class="text-muted small">Stagiaire</span>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <span class="text-muted">{{ stagiaire.email }}</span>
+                </td>
+                <td>
+                  <span class="text-muted">{{ stagiaire.phone || 'Non renseigné' }}</span>
+                </td>
+                <td>
+                  <span class="badge rounded-pill" [ngClass]="{
+                    'bg-success-subtle text-success': stagiaire.active,
+                    'bg-danger-subtle text-danger': !stagiaire.active
+                  }">
+                    {{ stagiaire.active ? 'Actif' : 'Inactif' }}
+                  </span>
+                </td>
+                <td>
+                  <div class="d-flex align-items-center gap-2">
+                    <div class="progress flex-grow-1" style="height: 6px;">
+                      <div class="progress-bar bg-warning" 
+                           [style.width.%]="(stagiaire.tachesEnCours / (stagiaire.tachesEnCours + stagiaire.tachesTerminees)) * 100">
+                      </div>
+                      <div class="progress-bar bg-success" 
+                           [style.width.%]="(stagiaire.tachesTerminees / (stagiaire.tachesEnCours + stagiaire.tachesTerminees)) * 100">
+                      </div>
+                    </div>
+                    <div class="d-flex gap-2">
+                      <span class="badge bg-warning-subtle text-warning">{{ stagiaire.tachesEnCours || 0 }}</span>
+                      <span class="badge bg-success-subtle text-success">{{ stagiaire.tachesTerminees || 0 }}</span>
+                    </div>
+                  </div>
+                </td>
+                <td class="text-end">
+                  <div class="btn-group">
+                    <button class="btn btn-sm btn-light-primary" (click)="navigateToChat(stagiaire.id)" title="Chat">
+                      <i class="feather icon-message-square"></i>
+                    </button>
+                    <button class="btn btn-sm btn-light-info" (click)="navigateToTaches(stagiaire.id)" title="Tâches">
+                      <i class="feather icon-list"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </app-card>
+  </div>
+
+  <!-- Graphique de Performance -->
+  <div class="col-xl-8">
+    <app-card cardTitle="Performance des Stagiaires" cardClass="h-100">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex gap-3">
+          <div class="d-flex align-items-center">
+            <span class="badge bg-primary-subtle text-primary me-2">●</span>
+            <span class="text-muted">Tâches en cours</span>
+          </div>
+          <div class="d-flex align-items-center">
+            <span class="badge bg-success-subtle text-success me-2">●</span>
+            <span class="text-muted">Tâches terminées</span>
+          </div>
+        </div>
+      </div>
+      <div id="performance-chart" style="height: 350px"></div>
+    </app-card>
+  </div>
+
+  <!-- Activité Récente -->
+  <div class="col-xl-4">
+    <app-card cardTitle="Activité Récente" cardClass="h-100">
+      <div class="activity-feed">
+        @for (stagiaire of stagiaires; track stagiaire) {
+          <div class="feed-item">
+            <div class="date text-muted small">{{ stagiaire.lastActivity | date:'short' }}</div>
+            <div class="text">
+              <strong>{{ stagiaire.username }}</strong> a 
+              <span [ngClass]="{
+                'text-success': stagiaire.lastActivityType === 'TASK_COMPLETED',
+                'text-warning': stagiaire.lastActivityType === 'TASK_STARTED',
+                'text-info': stagiaire.lastActivityType === 'MESSAGE'
+              }">
+                {{ stagiaire.lastActivityType === 'TASK_COMPLETED' ? 'terminé une tâche' :
+                   stagiaire.lastActivityType === 'TASK_STARTED' ? 'commencé une tâche' :
+                   'envoyé un message' }}
+              </span>
+            </div>
+          </div>
+        }
+      </div>
+    </app-card>
+  </div>
+
+  <!-- Notifications -->
+  <div class="col-xl-12 mt-4">
+    <div class="row">
+      <!-- Tâches Urgentes -->
+      <div class="col-xl-6">
+        <app-card cardTitle="Tâches Urgentes" cardClass="h-100">
+          <div class="urgent-tasks">
+            @for (tache of urgentTasks; track tache) {
+              <div class="urgent-task-item">
+                <div class="d-flex align-items-center">
+                  <div class="urgent-indicator"></div>
+                  <div class="ms-3 flex-grow-1">
+                    <h6 class="mb-1">{{ tache.titre }}</h6>
+                    <p class="text-muted mb-0 small">
+                      <i class="feather icon-user me-1"></i>
+                      {{ tache.stagiaireName }}
+                    </p>
+                  </div>
+                  <div class="text-end">
+                    <div class="badge bg-danger-subtle text-danger mb-1">
+                      {{ tache.daysLeft }} jours restants
+                    </div>
+                    <div class="small text-muted">
+                      {{ tache.dateFin | date:'short' }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            }
+            @if (urgentTasks.length === 0) {
+              <div class="text-center text-muted py-4">
+                <i class="feather icon-check-circle mb-2" style="font-size: 2rem;"></i>
+                <p>Aucune tâche urgente</p>
+              </div>
+            }
+          </div>
+        </app-card>
+      </div>
+
+      <!-- Nouveaux Messages -->
+      <div class="col-xl-6">
+        <app-card cardTitle="Nouveaux Messages" cardClass="h-100">
+          <div class="messages-list">
+            @for (message of newMessages; track message) {
+              <div class="message-item">
+                <div class="d-flex align-items-center">
+                  <img [src]="message.senderImage || 'assets/images/avatars/default.jpg'" 
+                       class="rounded-circle message-avatar" 
+                       [alt]="message.senderName">
+                  <div class="ms-3 flex-grow-1">
+                    <div class="d-flex justify-content-between align-items-center">
+                      <h6 class="mb-0">{{ message.senderName }}</h6>
+                      <small class="text-muted">{{ message.time | date:'short' }}</small>
+                    </div>
+                    <p class="text-muted mb-0 small message-preview">{{ message.content }}</p>
+                  </div>
+                  <button class="btn btn-sm btn-light-primary ms-2" (click)="navigateToChat(message.senderId)">
+                    <i class="feather icon-message-square"></i>
+                  </button>
+                </div>
+              </div>
+            }
+            @if (newMessages.length === 0) {
+              <div class="text-center text-muted py-4">
+                <i class="feather icon-message-square mb-2" style="font-size: 2rem;"></i>
+                <p>Aucun nouveau message</p>
+              </div>
+            }
+          </div>
+        </app-card>
+      </div>
+    </div>
+  </div>
+</div>

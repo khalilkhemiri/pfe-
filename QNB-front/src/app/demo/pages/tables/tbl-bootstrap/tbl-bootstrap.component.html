@@ -1,0 +1,10 @@
+<main class="main">
+  <div class="content">
+    <div class="calendar-controls">
+      <button class="theme-toggle" (click)="toggleDarkMode()">
+        {{ isDarkMode ? 'Mode Clair' : 'Mode Sombre' }}
+      </button>
+    </div>
+    <sx-calendar *ngIf="calendarApp" [calendarApp]="calendarApp"></sx-calendar>
+  </div>
+</main>

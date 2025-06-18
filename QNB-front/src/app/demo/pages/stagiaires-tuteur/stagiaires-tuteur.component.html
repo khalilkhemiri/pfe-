@@ -1,0 +1,148 @@
+<div class="dashboard-container">
+  <div class="header">
+    <h1>Gestion des Stagiaires</h1>
+    <div class="header-actions">
+      <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="Rechercher un stagiaire...">
+      </div>
+      <button class="btn btn-primary">
+        <i class="fas fa-plus"></i>
+        Nouveau Stagiaire
+      </button>
+    </div>
+  </div>
+
+  <div class="stats-container">
+    <div class="stat-card">
+      <div class="stat-icon active">
+        <i class="fas fa-user-check"></i>
+      </div>
+      <div class="stat-info">
+        <h3>Stagiaires Actifs</h3>
+        <p>{{getActiveStagiairesCount()}}</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon inactive">
+        <i class="fas fa-user-times"></i>
+      </div>
+      <div class="stat-info">
+        <h3>Stagiaires Inactifs</h3>
+        <p>{{getInactiveStagiairesCount()}}</p>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon total">
+        <i class="fas fa-users"></i>
+      </div>
+      <div class="stat-info">
+        <h3>Total Stagiaires</h3>
+        <p>{{stagiaires.length}}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <div class="table-header">
+      <h2>Liste des Stagiaires</h2>
+      <div class="table-actions">
+        <select class="select-items" [(ngModel)]="itemsPerPage">
+          <option [value]="10">10 par page</option>
+          <option [value]="25">25 par page</option>
+          <option [value]="50">50 par page</option>
+        </select>
+        <button class="btn btn-secondary">
+          <i class="fas fa-download"></i>
+          Exporter
+        </button>
+      </div>
+    </div>
+
+    <div class="table-container">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th class="th-checkbox">
+              <input type="checkbox" class="checkbox">
+            </th>
+            <th class="th-user">Stagiaire</th>
+            <th>Email</th>
+            <th>Téléphone</th>
+            <th>Statut</th>
+            <th>Date d'inscription</th>
+            <th class="th-actions">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let stagiaire of paginatedStagiaires">
+            <td>
+              <input type="checkbox" class="checkbox">
+            </td>
+            <td class="user-cell">
+              <div class="user-info">
+                <div class="avatar" [style.background-image]="getAvatarStyle(stagiaire)">
+                  {{!stagiaire.image ? getInitials(stagiaire.username) : ''}}
+                </div>
+                <div class="user-details">
+                  <span class="username">{{stagiaire.username}}</span>
+                  <span class="role">Stagiaire</span>
+                </div>
+              </div>
+            </td>
+            <td>{{stagiaire.email}}</td>
+            <td>{{stagiaire.phone || 'Non renseigné'}}</td>
+            <td>
+              <span class="status-badge" [class.active]="stagiaire.active">
+                <i class="fas" [class.fa-check-circle]="stagiaire.active" [class.fa-times-circle]="!stagiaire.active"></i>
+                {{stagiaire.active ? 'Actif' : 'Inactif'}}
+              </span>
+            </td>
+            <td>{{stagiaire.createdAt | date:'dd/MM/yyyy'}}</td>
+            <td>
+              <div class="action-buttons">
+                <button class="btn btn-icon btn-info" title="Voir détails">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn btn-icon btn-warning" title="Modifier">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-icon btn-danger" title="Supprimer">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="table-footer">
+      <div class="table-info">
+        Affichage de {{getStartIndex()}} à {{getEndIndex()}} sur {{stagiaires.length}} stagiaires
+      </div>
+      <div class="pagination">
+        <button class="btn btn-icon" [disabled]="currentPage === 1" (click)="changePage(1)">
+          <i class="fas fa-angle-double-left"></i>
+        </button>
+        <button class="btn btn-icon" [disabled]="currentPage === 1" (click)="changePage(currentPage - 1)">
+          <i class="fas fa-angle-left"></i>
+        </button>
+        <div class="page-numbers">
+          <button *ngFor="let page of getPageNumbers()" 
+                  class="btn" 
+                  [class.active]="currentPage === page"
+                  (click)="changePage(page)">
+            {{page}}
+          </button>
+        </div>
+        <button class="btn btn-icon" [disabled]="currentPage === totalPages" (click)="changePage(currentPage + 1)">
+          <i class="fas fa-angle-right"></i>
+        </button>
+        <button class="btn btn-icon" [disabled]="currentPage === totalPages" (click)="changePage(totalPages)">
+          <i class="fas fa-angle-double-right"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

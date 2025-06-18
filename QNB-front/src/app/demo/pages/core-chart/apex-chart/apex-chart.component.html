@@ -1,0 +1,25 @@
+<div class="board-container" cdkDropListGroup>
+  <div class="column" *ngFor="let status of statuts">
+    <h3>{{ status.label }}</h3>
+
+    <div
+      cdkDropList
+      [cdkDropListData]="status.tasks"
+      class="task-list"
+      [cdkDropListConnectedTo]="connectedDropLists"
+      (cdkDropListDropped)="onDrop($event, status.value)"
+    >
+    <div
+    class="task-card"
+    *ngFor="let task of status.tasks"
+    [attr.data-status]="task.statut"
+    cdkDrag
+  >
+  
+        <h4>{{ task.titre }}</h4>
+        <p>{{ task.description }}</p>
+        <small>{{ task.dateDebut }} → {{ task.dateFin }}</small>
+      </div>
+    </div>
+  </div>
+</div>
