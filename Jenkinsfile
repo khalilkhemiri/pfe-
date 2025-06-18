@@ -18,6 +18,7 @@ pipeline {
       steps {
         dir('jwt-demo-main') {
           echo "🔧 Building Spring Boot backend..."
+           sh 'chmod +x mvnw' // 🔧 Autoriser l'exécution
           sh './mvnw clean install' // or use 'mvn clean install' if mvnw doesn't exist
         }
       }
