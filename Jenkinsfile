@@ -28,7 +28,7 @@ pipeline {
       steps {
         dir('QNB-front') {
           echo "🛠️ Building Angular frontend..."
-          sh 'npm install'
+          sh 'npm install --force'
           sh './node_modules/@angular/cli/bin/ng build --configuration=production'
         }
       }
