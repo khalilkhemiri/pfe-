@@ -1,4 +1,3 @@
-
 pipeline {
   agent any
 
@@ -18,8 +17,8 @@ pipeline {
     stage('Backend Build') {
       steps {
         dir('jwt-demo-main') {
-          echo "Building Spring Boot backend..."
-          sh './mvnw clean install' // use `mvn` if you don’t have `mvnw`
+          echo "🔧 Building Spring Boot backend..."
+          sh './mvnw clean install' // or 'mvn clean install' if no wrapper
         }
       }
     }
@@ -27,9 +26,9 @@ pipeline {
     stage('Frontend Build') {
       steps {
         dir('QNB-front') {
-          echo "Building Angular frontend..."
+          echo "🛠️ Building Angular frontend..."
           sh 'npm install'
-          sh 'ng build --configuration=production'
+          sh './node_modules/@angular/cli/bin/ng build --configuration=production'
         }
       }
     }
@@ -38,6 +37,7 @@ pipeline {
       steps {
         dir('jwt-demo-main') {
           withSonarQubeEnv('MySonarQubeServer') {
+            echo "🔎 Running SonarQube analysis..."
             sh './mvnw sonar:sonar -Dsonar.login=$SONAR_TOKEN'
           }
         }
@@ -47,9 +47,11 @@ pipeline {
     stage('Docker Build & Push') {
       steps {
         script {
+          echo "🐳 Building Docker image and pushing to DockerHub..."
           docker.withRegistry('https://index.docker.io/v1/', 'dockerhub') {
             def image = docker.build("${IMAGE_NAME}:${env.BUILD_NUMBER}")
             image.push()
+            image.push("latest") // optional but recommended
           }
         }
       }
@@ -58,10 +60,10 @@ pipeline {
 
   post {
     success {
-      echo '✅ All steps succeeded!'
+      echo '✅ Pipeline completed successfully!'
     }
     failure {
-      echo '❌ Pipeline failed.'
+      echo '❌ Pipeline failed. Check the logs.'
     }
   }
 }
