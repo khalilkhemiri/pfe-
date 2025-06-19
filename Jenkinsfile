@@ -45,7 +45,7 @@ pipeline {
         }
       }
     }
-
+        
     stage('Docker Build & Push Backend') {
       steps {
         script {
@@ -73,6 +73,24 @@ pipeline {
               image.push("latest")
             }
           }
+        }
+      }
+    }
+    
+    stage('Trivy Scan Docker Images') {
+      steps {
+        script {
+          echo "🔍 Scanning Docker images with Trivy..."
+
+          // Scanner l'image frontend
+          sh "trivy image --severity CRITICAL,HIGH --format json --output trivy-report-frontend.json ${IMAGE_NAME_FRONT}:latest"
+
+          // Scanner l'image backend
+          sh "trivy image --severity CRITICAL,HIGH --format json --output trivy-report-backend.json ${IMAGE_NAME_BACK}:latest"
+
+          // Afficher les rapports dans la console Jenkins
+          sh 'cat trivy-report-frontend.json'
+          sh 'cat trivy-report-backend.json'
         }
       }
     }
