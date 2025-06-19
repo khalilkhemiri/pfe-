@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pfe-frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: pfe-frontend
+  template:
+    metadata:
+      labels:
+        app: pfe-frontend
+    spec:
+      containers:
+        - name: pfe-frontend
+          image: khalilkh/pfe-front:latest
+          ports:
+            - containerPort: 80
