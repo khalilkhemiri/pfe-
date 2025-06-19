@@ -45,14 +45,31 @@ pipeline {
       }
     }
 
-    stage('Docker Build & Push') {
+    stage('Docker Build & Push Backend') {
       steps {
         script {
-          echo "🐳 Building Docker image and pushing to DockerHub..."
+          echo "🐳 Building and pushing backend Docker image..."
           docker.withRegistry('https://index.docker.io/v1/', 'dockerhub') {
-            def image = docker.build("${IMAGE_NAME}:${env.BUILD_NUMBER}")
-            image.push()
-            image.push("latest")
+            dir('jwt-demo-main') {
+              def backImage = docker.build("${IMAGE_NAME_BACK}:${env.BUILD_NUMBER}")
+              backImage.push()
+              backImage.push("latest")
+            }
+          }
+        }
+      }
+    }
+
+    stage('Docker Build & Push Frontend') {
+      steps {
+        script {
+          echo "🌐 Building and pushing frontend Docker image..."
+          docker.withRegistry('https://index.docker.io/v1/', 'dockerhub') {
+            dir('QNB-front') {
+              def frontImage = docker.build("${IMAGE_NAME_FRONT}:${env.BUILD_NUMBER}")
+              frontImage.push()
+              frontImage.push("latest")
+            }
           }
         }
       }
