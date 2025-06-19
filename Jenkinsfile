@@ -4,7 +4,8 @@ pipeline {
   environment {
     SONAR_TOKEN = credentials('sonarqube-token')
     DOCKER_CREDENTIALS = credentials('dockerhub')
-    IMAGE_NAME = "khalilkh/pfe-app"
+    IMAGE_NAME_BACK = "khalilkh/pfe-back"
+    IMAGE_NAME_FRONT = "khalilkh/pfe-front"
   }
 
   stages {
@@ -18,8 +19,8 @@ pipeline {
       steps {
         dir('jwt-demo-main') {
           echo "🔧 Building Spring Boot backend..."
-           sh 'chmod +x mvnw' // 🔧 Autoriser l'exécution
-          sh './mvnw clean install' // or use 'mvn clean install' if mvnw doesn't exist
+          sh 'chmod +x mvnw'
+          sh './mvnw clean install'
         }
       }
     }
@@ -51,9 +52,9 @@ pipeline {
           echo "🐳 Building and pushing backend Docker image..."
           docker.withRegistry('https://index.docker.io/v1/', 'dockerhub') {
             dir('jwt-demo-main') {
-              def backImage = docker.build("${IMAGE_NAME_BACK}:${env.BUILD_NUMBER}")
-              backImage.push()
-              backImage.push("latest")
+              def image = docker.build("${IMAGE_NAME_BACK}:${env.BUILD_NUMBER}")
+              image.push()
+              image.push("latest")
             }
           }
         }
@@ -63,12 +64,13 @@ pipeline {
     stage('Docker Build & Push Frontend') {
       steps {
         script {
-          echo "🌐 Building and pushing frontend Docker image..."
+          echo "🧱 Building and pushing frontend Docker image..."
           docker.withRegistry('https://index.docker.io/v1/', 'dockerhub') {
             dir('QNB-front') {
-              def frontImage = docker.build("${IMAGE_NAME_FRONT}:${env.BUILD_NUMBER}")
-              frontImage.push()
-              frontImage.push("latest")
+              // Le dossier généré est dist/datta-able-free-angular-admin-template
+              def image = docker.build("${IMAGE_NAME_FRONT}:${env.BUILD_NUMBER}", "--build-arg BUILD_DIR=dist/datta-able-free-angular-admin-template .")
+              image.push()
+              image.push("latest")
             }
           }
         }
