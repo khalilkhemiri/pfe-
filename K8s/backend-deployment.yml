@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pfe-backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: pfe-backend
+  template:
+    metadata:
+      labels:
+        app: pfe-backend
+    spec:
+      containers:
+        - name: pfe-backend
+          image: khalilkh/pfe-back:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_DATA_MONGODB_URI
+              value: "mongodb+srv://khalilkhemiri681:wZVeAfkhbsHQnav3@cluster0.mongodb.net/mydatabase?retryWrites=true&w=majority"
+          # Adapte cette variable à la config de ton backend
