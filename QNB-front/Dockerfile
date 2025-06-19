@@ -1,16 +1,17 @@
-FROM node:20
+# Étape 1 : Build Angular app
+FROM node:20 AS builder
 WORKDIR /app
-
-RUN npm install -g @angular/cli@15
-
 COPY package*.json ./
-
 RUN npm install --force
-
 COPY . .
+RUN npm run build --prod
 
-RUN ng build
+# Étape 2 : Serve avec nginx
+FROM nginx:alpine
+COPY --from=builder /app/dist/QNB-front /usr/share/nginx/html
 
-EXPOSE 4200
+# Copie config nginx personnalisée (optionnelle)
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-CMD ["ng", "serve", "--host", "0.0.0.0", "--port", "4200", "--disable-host-check"]
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
