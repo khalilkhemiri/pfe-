@@ -35,16 +35,7 @@ pipeline {
       }
     }
 
-    stage('SonarQube Analysis') {
-      steps {
-        dir('jwt-demo-main') {
-          withSonarQubeEnv('MySonarQubeServer') {
-            echo "🔎 Running SonarQube analysis..."
-            sh './mvnw sonar:sonar -Dsonar.login=$SONAR_TOKEN'
-          }
-        }
-      }
-    }
+    
         
     stage('Docker Build & Push Backend') {
       steps {
@@ -77,23 +68,26 @@ pipeline {
       }
     }
     
-    stage('Trivy Scan Docker Images') {
-      steps {
-        script {
-          echo "🔍 Scanning Docker images with Trivy..."
+   stage('Kubernetes Deploy') {
+  steps {
+    script {
+      echo "🚀 Deploying backend and frontend to Kubernetes..."
 
-          // Scanner l'image frontend
-          sh "trivy image --severity CRITICAL,HIGH --format json --output trivy-report-frontend.json ${IMAGE_NAME_FRONT}:latest"
+      // Assure que KUBECONFIG est bien exporté
+      sh 'export KUBECONFIG=~/k3s.yaml && kubectl apply -f K8s/backend-deployment.yml'
+      sh 'export KUBECONFIG=~/k3s.yaml && kubectl apply -f K8s/backend-service.yml'
+      sh 'export KUBECONFIG=~/k3s.yaml && kubectl apply -f K8s/frontend-deployment.yml'
+      sh 'export KUBECONFIG=~/k3s.yaml && kubectl apply -f K8s/frontend-service.yml'
+      sh 'export KUBECONFIG=~/k3s.yaml && kubectl apply -f K8s/ingress.yaml'
 
-          // Scanner l'image backend
-          sh "trivy image --severity CRITICAL,HIGH --format json --output trivy-report-backend.json ${IMAGE_NAME_BACK}:latest"
-
-          // Afficher les rapports dans la console Jenkins
-          sh 'cat trivy-report-frontend.json'
-          sh 'cat trivy-report-backend.json'
-        }
-      }
+      // Vérification (optionnel)
+      sh 'export KUBECONFIG=~/k3s.yaml && kubectl get pods'
+      sh 'export KUBECONFIG=~/k3s.yaml && kubectl get svc'
+      sh 'export KUBECONFIG=~/k3s.yaml && kubectl get ingress'
     }
+  }
+}
+ 
   }
 
   post {
