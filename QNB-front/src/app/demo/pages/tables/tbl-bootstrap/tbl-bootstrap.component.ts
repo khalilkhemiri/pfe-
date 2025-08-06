@@ -26,7 +26,7 @@ export default class TblBootstrapComponent {
 
   loadTasks(): void {
     const stagiaireId = this.authService.getCurrentUserId();
-    this.http.get<any[]>(`http://localhost:8080/api/taches/stagiaire/${stagiaireId}`)
+    this.http.get<any[]>(`http://192.168.5.128:31615/api/taches/stagiaire/${stagiaireId}`)
       .subscribe((taches) => {
         const events = taches.map(tache => ({
           id: tache.id,
