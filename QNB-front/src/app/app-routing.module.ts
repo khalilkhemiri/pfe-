@@ -26,7 +26,7 @@ const routes: Routes = [
     children: [
       {
         path: '',
-        redirectTo: 'dash',
+        redirectTo: 'auth/signin',
         pathMatch: 'full'
       },
       {
@@ -40,6 +40,10 @@ const routes: Routes = [
       {
         path: 'forms',
         loadChildren: () => import('./demo/pages/form-elements/form-elements.module').then((m) => m.FormElementsModule)
+      },
+      {
+        path: 'meeting',
+        loadComponent: () => import('./demo/pages/form-elements/meeting/meeting.component').then((m) => m.MeetingComponent)
       },
       {
         path: 'tables',
@@ -62,6 +66,10 @@ const routes: Routes = [
         loadComponent: () => import('./demo/pages/stagiaires-tuteur/stagiaires-tuteur.component').then(m => m.StagiairesTuteurComponent)
       },
       {
+        path: 'tuteur-taches-stagiaire',
+        loadComponent: () => import('./demo/pages/tuteur-taches-stagiaire/tuteur-taches-stagiaire.component').then(m => m.TuteurTachesStagiaireComponent)
+      },
+      {
         path: 'chat',
         loadComponent: () => import('./demo/pages/chat/chat.component').then(m => m.ChatComponent)
       },
@@ -72,6 +80,30 @@ const routes: Routes = [
       {
         path: 'chat/stagiaire',
         loadComponent: () => import('./demo/pages/chat/stagiaire-chat/stagiaire-chat.component').then(m => m.StagiaireChatComponent)
+      },       {
+        path: 'evaluation',
+        children: [
+          {
+            path: 'dashboard',
+            loadComponent: () => import('./demo/pages/evaluation/evaluation-dashboard/evaluation-dashboard.component').then(m => m.EvaluationDashboardComponent)
+          },
+          {
+            path: 'form/:id',
+            loadComponent: () => import('./demo/pages/evaluation/evaluation-form/evaluation-form.component').then(m => m.EvaluationFormComponent)
+          },
+          {
+            path: 'historique/:id',
+            loadComponent: () => import('./demo/pages/evaluation/evaluation-historique/evaluation-historique.component').then(m => m.EvaluationHistoriqueComponent)
+          }
+        ]
+      },
+      {
+        path: 'admin-dashboard',
+        loadComponent: () => import('./demo/pages/admin-dashboard/admin-dashboard.component').then(m => m.AdminDashboardComponent)
+      },
+      {
+        path: 'tuteur/taches-stagiaire/:stagiaireId',
+        loadComponent: () => import('./demo/pages/tuteur-taches-stagiaire/tuteur-taches-stagiaire.component').then(m => m.TuteurTachesStagiaireComponent)
       }
     ]
   },

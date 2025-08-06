@@ -1,0 +1,39 @@
+<div class="meeting-container">
+  <h2>Créer une réunion</h2>
+  <form [formGroup]="meetingForm" (ngSubmit)="createMeeting()" class="meeting-form">
+    <div class="mb-3">
+      <label for="title" class="form-label">Titre de la réunion</label>
+      <input id="title" type="text" class="form-control" formControlName="title" placeholder="Titre" [class.is-invalid]="meetingForm.get('title')?.invalid && meetingForm.get('title')?.touched">
+      <div *ngIf="meetingForm.get('title')?.invalid && meetingForm.get('title')?.touched" class="invalid-feedback">
+        Le titre est requis.
+      </div>
+    </div>
+    <div class="mb-3">
+      <label for="date" class="form-label">Date & Heure</label>
+      <input id="date" type="datetime-local" class="form-control" formControlName="date" [class.is-invalid]="meetingForm.get('date')?.invalid && meetingForm.get('date')?.touched">
+      <div *ngIf="meetingForm.get('date')?.invalid && meetingForm.get('date')?.touched" class="invalid-feedback">
+        La date est requise.
+      </div>
+    </div>
+    <div class="mb-3">
+      <label for="description" class="form-label">Description</label>
+      <textarea id="description" class="form-control" formControlName="description" rows="3" placeholder="Description (optionnelle)"></textarea>
+    </div>
+    <div class="mb-3">
+      <label for="stagiaireId" class="form-label">Inviter un stagiaire</label>
+      <select id="stagiaireId" class="form-select" formControlName="stagiaireId" [class.is-invalid]="meetingForm.get('stagiaireId')?.invalid && meetingForm.get('stagiaireId')?.touched">
+        <option value="">-- Sélectionner un stagiaire --</option>
+        <option *ngFor="let s of stagiaires" [value]="s.id">{{ s.username }} ({{ s.email }})</option>
+      </select>
+      <div *ngIf="meetingForm.get('stagiaireId')?.invalid && meetingForm.get('stagiaireId')?.touched" class="invalid-feedback">
+        Veuillez sélectionner un stagiaire.
+      </div>
+    </div>
+    <button type="submit" class="btn btn-primary w-100" [disabled]="meetingForm.invalid || loading">
+      <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+      Créer la réunion
+    </button>
+    <div *ngIf="successMsg" class="alert alert-success mt-3">{{ successMsg }}</div>
+    <div *ngIf="errorMsg" class="alert alert-danger mt-3">{{ errorMsg }}</div>
+  </form>
+</div>

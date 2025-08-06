@@ -54,7 +54,8 @@ export default class BasicElementsComponent {
       stagiairesIds: []
 
     });
-    this.stagiaireService.getStagiairesByTuteur('67fe612de3c8970cb882f1e3').subscribe((stagiaires) => {
+    const tuteurId = this.stagiaireService.getCurrentUserId();
+    this.stagiaireService.getStagiairesByTuteur(tuteurId).subscribe((stagiaires) => {
       this.stagiaires = stagiaires;
     });
   }

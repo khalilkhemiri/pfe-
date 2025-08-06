@@ -16,6 +16,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { TacheDetailDialogComponent } from './tache-detail-dialog.component';
+import { AuthService } from '../../service/auth/auth.service';
 
 enum StatutTache {
   EN_ATTENTE = 'EN_ATTENTE',
@@ -65,17 +66,19 @@ export class TacheStagiaireComponent implements OnInit {
   taches: Tache[] = [];
   filteredTaches: Tache[] = [];
   selectedFilter: string = 'all';
-  stagiaireId = '67fe6e2ce170de1a3b628a4d';
+  stagiaireId: string = '';
   StatutTache = StatutTache;
 
   constructor(
     private tacheService: TacheService,
     private http: HttpClient,
     private snackBar: MatSnackBar,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
+    this.stagiaireId = this.authService.getCurrentUserId();
     this.loadTaches();
   }
 

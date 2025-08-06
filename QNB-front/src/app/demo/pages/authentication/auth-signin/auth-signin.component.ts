@@ -15,6 +15,7 @@ export default class AuthSigninComponent {
   username = '';
   password = '';
   errorMessage = '';
+  showPassword = false;
 
   constructor(private authService: AuthService, private router: Router) {}
 

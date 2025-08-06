@@ -4,6 +4,7 @@ import { RouterOutlet } from '@angular/router';
 import { CalendarComponent } from "@schedule-x/angular";
 import { createCalendar, createViewWeek, createViewMonthAgenda, createViewMonthGrid } from '@schedule-x/calendar';
 import { HttpClient } from '@angular/common/http';
+import { AuthService } from 'src/app/demo/service/auth/auth.service';
 
 @Component({
   selector: 'app-tbl-bootstrap',
@@ -17,14 +18,15 @@ export default class TblBootstrapComponent {
   calendarApp: any;
   isDarkMode: boolean = false;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private authService: AuthService) {}
 
   ngOnInit(): void {
     this.loadTasks();
   }
 
   loadTasks(): void {
-    this.http.get<any[]>('http://localhost:8080/api/taches/stagiaire/67fe6e2ce170de1a3b628a4d')
+    const stagiaireId = this.authService.getCurrentUserId();
+    this.http.get<any[]>(`http://localhost:8080/api/taches/stagiaire/${stagiaireId}`)
       .subscribe((taches) => {
         const events = taches.map(tache => ({
           id: tache.id,

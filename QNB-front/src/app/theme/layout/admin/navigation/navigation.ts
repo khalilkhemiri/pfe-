@@ -138,11 +138,81 @@ export const ADMIN_ITEMS: NavigationItem[] = [
     type: 'group',
     children: [
       {
-        id: 'dashboard',
-        title: 'Dashboard',
+        id: 'dashboard Admin',
+        title: 'Dashboard Admin',
         type: 'item',
         url: '/admin-dashboard',
         icon: 'feather icon-home'
+      },
+     
+      
+      
+    ]
+  }
+];
+
+export const TUTEUR_ITEMS: NavigationItem[] = [
+  {
+    id: 'tuteur',
+    title: 'Espace Tuteur',
+    type: 'group',
+    children: [
+      {
+      id: 'dashboard',
+      title: 'Dashboard',
+      type: 'item',
+      url: '/dashboard',
+      icon: 'feather icon-home',
+      classes: 'nav-item'
+    },
+      {
+        id: 'mes-stagiaires',
+        title: 'Mes Stagiaires',
+        type: 'item',
+        url: '/stagiaires-tuteur',
+        icon: 'feather icon-user-check'
+      },
+      
+      {
+        id: 'forms-element',
+        title: 'Form Elements',
+        type: 'item',
+        url: '/forms/basic',
+        classes: 'nav-item',
+        icon: 'feather icon-file-text'
+      },
+      {
+        id: 'forms-element',
+        title: 'Evaluation',
+        type: 'item',
+        url: '/evaluation/dashboard',
+        classes: 'nav-item',
+        icon: 'feather icon-file-text'
+      },
+       {
+        id: 'forms-element',
+        title: 'Meeting',
+        type: 'item',
+        url: '/meeting',
+        classes: 'nav-item',
+        icon: 'feather icon-file-text'
+      },
+    ]
+  }
+];
+
+export const STAGIAIRE_ITEMS: NavigationItem[] = [
+  {
+    id: 'stagiaire',
+    title: 'Espace Stagiaire',
+    type: 'group',
+    children: [
+      {
+        id: 'mes-demandes',
+        title: 'Dashboard',
+        type: 'item',
+        url: '/dash',
+        icon: 'feather icon-edit'
       },
       {
         id: 'tables',
@@ -151,14 +221,6 @@ export const ADMIN_ITEMS: NavigationItem[] = [
         url: '/tables/bootstrap',
         classes: 'nav-item',
         icon: 'feather icon-server'
-      },
-      {
-        id: 'forms-element',
-        title: 'Form Elements',
-        type: 'item',
-        url: '/forms/basic',
-        classes: 'nav-item',
-        icon: 'feather icon-file-text'
       },
       {
         id: 'apexChart',
@@ -175,48 +237,6 @@ export const ADMIN_ITEMS: NavigationItem[] = [
         url: 'tache',
         classes: 'nav-item',
         icon: 'feather icon-pie-chart'
-      }
-    ]
-  }
-];
-
-export const TUTEUR_ITEMS: NavigationItem[] = [
-  {
-    id: 'tuteur',
-    title: 'Espace Tuteur',
-    type: 'group',
-    children: [
-      {
-        id: 'mes-stagiaires',
-        title: 'Mes Stagiaires',
-        type: 'item',
-        url: '/tuteur/stagiaires',
-        icon: 'feather icon-user-check'
-      },
-      {
-        id: 'dashboard',
-        title: 'Dashboard',
-        type: 'item',
-        url: '/dashboard',
-        icon: 'feather icon-home',
-        classes: 'nav-item'
-      }
-    ]
-  }
-];
-
-export const STAGIAIRE_ITEMS: NavigationItem[] = [
-  {
-    id: 'stagiaire',
-    title: 'Espace Stagiaire',
-    type: 'group',
-    children: [
-      {
-        id: 'mes-demandes',
-        title: 'Mes Demandes',
-        type: 'item',
-        url: '/stagiaire/demandes',
-        icon: 'feather icon-edit'
       }
     ]
   }

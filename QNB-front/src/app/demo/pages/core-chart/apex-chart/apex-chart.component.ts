@@ -6,6 +6,7 @@ import { CdkDragDrop, transferArrayItem } from '@angular/cdk/drag-drop';
 import { HttpClient } from '@angular/common/http';
 // third party
 import { DragDropModule } from '@angular/cdk/drag-drop';
+import { AuthService } from 'src/app/demo/service/auth/auth.service';
 
 @Component({
   selector: 'app-apex-chart',
@@ -16,7 +17,7 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 })
 export default class ApexChartComponent implements OnInit {
 
-  stagiaireId = '67fe6e2ce170de1a3b628a4d'; 
+  stagiaireId = ''; 
 
   statuts = [
     { label: 'En attente', value: 'EN_ATTENTE', tasks: [] },
@@ -28,9 +29,10 @@ export default class ApexChartComponent implements OnInit {
     return this.statuts.map(s => s.value);
   }
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private authService: AuthService) {}
 
   ngOnInit() {
+    this.stagiaireId = this.authService.getCurrentUserId();
     this.http.get<any[]>(`http://localhost:8080/api/taches/stagiaire/${this.stagiaireId}`).subscribe(data => {
       data.forEach(task => {
         const column = this.statuts.find(s => s.value === task.statut);

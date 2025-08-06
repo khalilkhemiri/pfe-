@@ -56,8 +56,9 @@ export class AuthService {
     if (!token) return null;
   
     const decoded: any = this.parseJwt(token);
-    console.log(decoded); // ← ici tu as les rôles, username, etc.
-    return decoded?.roles || null; // ← ici tu peux retourner le rôle
+    console.log(decoded); 
+    return decoded?.roles || null; 
+    
   }
   
   parseJwt(token: string): any {
@@ -81,10 +82,27 @@ export class AuthService {
     return this.http.delete(`${this.apiUrl1}/reject/${id}`,{ responseType: 'text' });
   }
   getStagiairesByTuteur(tuteurId: string): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/stagiaires-by-tuteur/${tuteurId}`);
+    return this.http.get<any[]>(`${this.apiUrl1}/stagiaires-by-tuteur/${tuteurId}`);
   }
 
   getStagiaireById(id: string): Observable<any> {
     return this.http.get<any>(`http://localhost:8080/api/auth/stagiaire/${id}`);
+  }
+
+  // Méthode pour obtenir l'ID de l'utilisateur connecté
+  getCurrentUserId(): string {
+    const token = this.getToken();
+    if (!token) return '';
+  
+    const decoded: any = this.parseJwt(token);
+    return decoded?.id || '';
+  }
+
+  getAllStagiaires(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl1}/stagiaires`);
+  }
+
+  getAllTuteurs(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl1}/tuteurs`);
   }
 }

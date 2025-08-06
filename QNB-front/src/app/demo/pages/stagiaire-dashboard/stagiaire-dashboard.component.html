@@ -1,151 +1,108 @@
-<div class="dashboard-container">
-  <!-- En-tête avec informations du stagiaire -->
-  <div class="profile-section">
-    <div class="card profile-card">
-      <div class="card-body">
-        <div class="d-flex align-items-center">
-          <div class="profile-image-container">
-            <img [src]="stagiaireInfo?.image || 'assets/images/avatars/default.jpg'" 
-                 class="profile-image" 
-                 [alt]="stagiaireInfo?.username">
-            <div class="status-indicator online"></div>
-          </div>
-          <div class="ms-4">
-            <h4 class="mb-1">{{ stagiaireInfo?.username }}</h4>
-            <p class="text-muted mb-2">Stagiaire</p>
-            <div class="d-flex gap-2">
-              <button class="btn btn-primary" (click)="navigateToChat()">
-                <i class="feather icon-message-square me-2"></i>
-                Contacter le tuteur
-              </button>
-            </div>
-          </div>
-        </div>
+<div class="stagiaire-dashboard-modern">
+  <!-- Header -->
+  <div class="sd-header">
+    <img [src]="stagiaireInfo?.image || 'assets/images/avatars/default.jpg'" class="sd-avatar" [alt]="stagiaireInfo?.username">
+    <div class="sd-header-info">
+      <h2>Bienvenue, {{ stagiaireInfo?.prenom || stagiaireInfo?.username }}</h2>
+      <p class="sd-username">{{ stagiaireInfo?.email }}</p>
+      <button class="btn btn-primary" (click)="navigateToChat()">
+        <i class="feather icon-message-square me-2"></i> Contacter mon tuteur
+      </button>
+    </div>
+    <div class="sd-progress-circle">
+      <svg viewBox="0 0 36 36">
+        <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+        <path class="circle" [attr.stroke-dasharray]="progression.tauxCompletion + ', 100'" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+        <text x="18" y="20.35" class="percentage">{{ progression.tauxCompletion | number:'1.0-0' }}%</text>
+      </svg>
+      <div class="sd-progress-label">Taux de complétion</div>
+    </div>
+  </div>
+
+  <!-- Statistiques -->
+  <div class="sd-stats-cards">
+    <div class="sd-stat-card">
+      <i class="feather icon-clock"></i>
+      <div>
+        <div class="stat-label">Tâches en cours</div>
+        <div class="stat-value">{{ progression.tachesEnCours }}</div>
+      </div>
+    </div>
+    <div class="sd-stat-card">
+      <i class="feather icon-check-circle"></i>
+      <div>
+        <div class="stat-label">Tâches terminées</div>
+        <div class="stat-value">{{ progression.tachesTerminees }}</div>
+      </div>
+    </div>
+    <div class="sd-stat-card">
+      <i class="feather icon-list"></i>
+      <div>
+        <div class="stat-label">Total tâches</div>
+        <div class="stat-value">{{ progression.totalTaches }}</div>
       </div>
     </div>
   </div>
 
-  <!-- Statistiques et Graphiques -->
-  <div class="stats-section">
-    <div class="row">
-      <!-- Carte de progression -->
-      <div class="col-xl-4">
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">Progression Globale</h5>
-            <div class="chart-container">
-              <canvas baseChart
-                [data]="progressionChartData"
-                [options]="progressionChartOptions"
-                [type]="'doughnut'">
-              </canvas>
-            </div>
-            <div class="progress-stats mt-4">
-              <div class="stat-item">
-                <span class="stat-label">Taux de Complétion</span>
-                <span class="stat-value">{{ progression.tauxCompletion | number:'1.0-0' }}%</span>
-              </div>
-            </div>
+  <!-- Timeline des tâches -->
+  <div class="sd-timeline-section">
+    <h3 class="sd-section-title"><i class="feather icon-activity"></i> Mes Tâches</h3>
+    <div class="sd-timeline">
+      <div *ngFor="let tache of taches" class="sd-timeline-item" [ngClass]="getStatusClass(tache)">
+        <div class="sd-timeline-dot"></div>
+        <div class="sd-timeline-content">
+          <div class="sd-timeline-header">
+            <span class="sd-tache-titre">{{ tache.titre }}</span>
+            <span class="sd-tache-date">{{ tache.dateFin | date:'dd/MM/yyyy' }}</span>
           </div>
+          <div class="sd-tache-desc">{{ tache.description }}</div>
+          <div class="sd-tache-status">
+            <span class="badge" [ngClass]="getStatusClass(tache)">
+              {{ tache.statut === 'TERMINEE' ? 'Terminée' : tache.statut === 'EN_COURS' ? 'En cours' : 'À faire' }}
+            </span>
+            <span *ngIf="isUrgent(tache)" class="badge bg-danger ms-2">Urgent</span>
+          </div>
+          <button class="btn btn-outline-primary btn-sm mt-2" (click)="navigateToTacheDetail(tache.id)">
+            {{ tache.statut === 'TERMINEE' ? 'Voir rendu' : 'Envoyer rendu' }}
+          </button>
         </div>
       </div>
-
-      <!-- Graphique de progression hebdomadaire -->
-      <div class="col-xl-8">
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">Progression Hebdomadaire</h5>
-            <div class="chart-container">
-              <canvas baseChart
-                [data]="weeklyProgressData"
-                [options]="weeklyProgressOptions"
-                [type]="'line'">
-              </canvas>
-            </div>
-          </div>
-        </div>
+      <div *ngIf="taches.length === 0" class="text-center text-muted py-4">
+        <i class="feather icon-check-circle mb-2" style="font-size: 2rem;"></i>
+        <p>Aucune tâche assignée</p>
       </div>
     </div>
   </div>
 
-  <!-- Tâches Urgentes -->
-  <div class="urgent-tasks-section">
-    <div class="card">
-      <div class="card-body">
-        <h5 class="card-title">Tâches Urgentes</h5>
-        <div class="urgent-tasks">
-          <ng-container *ngFor="let tache of taches">
-            <div *ngIf="isUrgent(tache)" class="urgent-task-item" (click)="navigateToTacheDetail(tache.id)">
-              <div class="d-flex align-items-center">
-                <div class="urgent-indicator"></div>
-                <div class="ms-3 flex-grow-1">
-                  <h6 class="mb-1">{{ tache.titre }}</h6>
-                  <p class="text-muted mb-0 small">{{ tache.description }}</p>
-                </div>
-                <div class="text-end">
-                  <div class="badge bg-danger-subtle text-danger mb-1">
-                    {{ tache.dateFin | date:'dd/MM/yyyy' }}
-                  </div>
-                  <div class="small text-muted">
-                    {{ tache.dateFin | date:'shortTime' }}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </ng-container>
-          <div *ngIf="!hasUrgentTasks()" class="text-center text-muted py-4">
-            <i class="feather icon-check-circle mb-2" style="font-size: 2rem;"></i>
-            <p>Aucune tâche urgente</p>
-          </div>
+  <!-- Section Mes Rendus -->
+  <div class="sd-rendus-section">
+    <h3 class="sd-section-title"><i class="feather icon-file-text"></i> Mes Rendus</h3>
+    <div class="sd-rendus-list">
+      <div *ngFor="let tache of rendus" class="sd-rendu-item">
+        <div class="rendu-titre">{{ tache.titre }}</div>
+        <div class="rendu-date">Rendu le {{ tache.dateFin | date:'dd/MM/yyyy' }}</div>
+        <div class="rendu-status">
+          <span class="badge bg-success">Validé</span>
+          <!-- Optionnel : feedback du tuteur -->
         </div>
+      </div>
+      <div *ngIf="!hasRendus" class="text-center text-muted py-4">
+        <i class="feather icon-file-text mb-2" style="font-size: 2rem;"></i>
+        <p>Aucun rendu envoyé</p>
       </div>
     </div>
   </div>
 
-  <!-- Prochaines Échéances -->
-  <div class="upcoming-tasks-section">
-    <div class="card">
-      <div class="card-body">
-        <h5 class="card-title">Prochaines Échéances</h5>
-        <div class="upcoming-tasks">
-          <div class="calendar-header">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-              <h6 class="mb-0">7 prochains jours</h6>
-              <div class="date-range">
-                {{ getDateRange() }}
-              </div>
-            </div>
-          </div>
-          <div class="upcoming-tasks-list">
-            <ng-container *ngFor="let tache of getUpcomingTasks()">
-              <div class="upcoming-task-item" (click)="navigateToTacheDetail(tache.id)">
-                <div class="d-flex align-items-center">
-                  <div class="date-badge">
-                    <span class="day">{{ tache.dateFin | date:'dd' }}</span>
-                    <span class="month">{{ tache.dateFin | date:'MMM' }}</span>
-                  </div>
-                  <div class="ms-3 flex-grow-1">
-                    <h6 class="mb-1">{{ tache.titre }}</h6>
-                    <p class="text-muted mb-0 small">{{ tache.description }}</p>
-                  </div>
-                  <div class="text-end">
-                    <div class="badge" [ngClass]="getPriorityClass(tache)">
-                      {{ tache.priorite }}
-                    </div>
-                    <div class="small text-muted mt-1">
-                      {{ tache.dateFin | date:'shortTime' }}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </ng-container>
-            <div *ngIf="!hasUpcomingTasks()" class="text-center text-muted py-4">
-              <i class="feather icon-calendar mb-2" style="font-size: 2rem;"></i>
-              <p>Aucune échéance à venir</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+  <!-- Graphique SVG simple -->
+  <div class="sd-simple-graph">
+    <h3 class="sd-section-title"><i class="feather icon-bar-chart-2"></i> Vue d'ensemble des tâches</h3>
+    <svg width="100%" height="120" viewBox="0 0 340 120">
+      <rect x="20" y="30" width="80" height="60" fill="#4e73df" rx="8" />
+      <rect x="130" y="50" width="80" height="40" fill="#36b9cc" rx="8" />
+      <rect x="240" y="70" width="80" height="20" fill="#e74a3b" rx="8" />
+      <text x="60" y="105" text-anchor="middle" fill="#222" font-size="15">Terminées</text>
+      <text x="170" y="105" text-anchor="middle" fill="#222" font-size="15">En cours</text>
+      <text x="280" y="105" text-anchor="middle" fill="#222" font-size="15">À faire</text>
+    </svg>
   </div>
-</div> 
+</div>

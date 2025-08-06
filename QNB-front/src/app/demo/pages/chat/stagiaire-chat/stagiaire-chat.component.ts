@@ -17,8 +17,8 @@ export class StagiaireChatComponent implements OnInit, OnDestroy {
   tuteur: User | null = null;
   newMessage: string = '';
   currentUser: User = {
-    id: '684848c2723f2b2316deef13',  // ID statique du stagiaire
-    name: 'Stagiaire'  // Nom statique du stagiaire
+    id: '', // ID dynamique du stagiaire
+    name: 'Stagiaire'
   };
   private messageSubscription: Subscription;
 
@@ -26,6 +26,7 @@ export class StagiaireChatComponent implements OnInit, OnDestroy {
     private chatService: ChatService,
     private authService: AuthService
   ) {
+    this.currentUser.id = this.authService.getCurrentUserId();
     this.messageSubscription = this.chatService.messages$.subscribe(message => {
       console.log('New message received in component:', message);
       if (message.sender.id === this.tuteur?.id || message.receiver.id === this.tuteur?.id) {
@@ -118,4 +119,4 @@ export class StagiaireChatComponent implements OnInit, OnDestroy {
   formatTime(date: Date): string {
     return new Date(date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   }
-} 
+}

@@ -1,49 +1,103 @@
-<div class="auth-wrapper">
-  <div class="auth-content">
-    <div class="auth-bg">
-      <span class="r"></span>
-      <span class="r s"></span>
-      <span class="r s"></span>
-      <span class="r"></span>
-    </div>
-    <div class="card">
-      <div class="card-body text-center">
-        <div class="mb-4">
-          <i class="feather icon-user-plus auth-icon"></i>
-        </div>
-        <h3 class="mb-4">Sign up</h3>
-        <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
-          <div class="input-group mb-3">
-            <input formControlName="username" type="text" class="form-control" placeholder="Username" />
-          </div>
-          <div class="input-group mb-3">
-            <input formControlName="email" type="email" class="form-control" placeholder="Email" />
-          </div>
-          <div class="input-group mb-4">
-            <input formControlName="password" type="password" class="form-control" placeholder="Password" />
-          </div>
-          <input type="file" (change)="onFileSelected($event)" accept="image/*" />
 
-          <div class="form-group text-start mb-4">
-            <div class="checkbox checkbox-fill d-inline">
-              <input type="checkbox" name="checkbox-fill-1" id="checkbox-fill-1" checked />
-              <label for="checkbox-fill-1" class="cr">Save Details</label>
-            </div>
-          </div>
-          <div class="form-group text-start mb-3">
-            <div class="checkbox checkbox-fill d-inline">
-              <input type="checkbox" name="checkbox-fill-2" id="checkbox-fill-2" />
-              <label for="checkbox-fill-2" class="cr">
-                Send me the <a href="javascript:">Newsletter</a> weekly.
-              </label>
-            </div>
-          </div>
-          <button type="submit" class="btn btn-primary shadow-2 mb-4" [disabled]="signupForm.invalid">Sign up</button>
-        </form>
-        <p class="mb-0 text-muted">
-          Already have an account? <a routerLink="/auth/signin">Log in</a>
-        </p>
+<div class="signup-2steps-wrapper">
+  <div class="signup-2steps-card">
+    <div class="text-center mb-4">
+      <i class="feather icon-user-plus auth-icon" style="font-size: 2.5rem;"></i>
+      <h2 class="mb-2 font-weight-bold">Créer un compte</h2>
+      <div class="steps-indicator mb-3">
+        <span [class.active]="step === 1">1</span>
+        <span [class.active]="step === 2">2</span>
       </div>
     </div>
+    <form [formGroup]="signupForm" (ngSubmit)="onSubmit()" novalidate>
+      <div *ngIf="successMessage" class="alert alert-success text-center mb-3" style="font-size:1.1rem;">
+        {{ successMessage }}
+      </div>
+      <ng-container *ngIf="step === 1">
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <div class="input-group">
+              <span class="input-group-text"><i class="feather icon-user"></i></span>
+              <input formControlName="firstName" type="text" class="form-control" placeholder="Prénom" />
+            </div>
+            <div *ngIf="signupForm.get('firstName')?.invalid && signupForm.get('firstName')?.touched" class="text-danger small">Prénom requis</div>
+          </div>
+          <div class="col-md-6 mb-3">
+            <div class="input-group">
+              <span class="input-group-text"><i class="feather icon-user"></i></span>
+              <input formControlName="lastName" type="text" class="form-control" placeholder="Nom" />
+            </div>
+            <div *ngIf="signupForm.get('lastName')?.invalid && signupForm.get('lastName')?.touched" class="text-danger small">Nom requis</div>
+          </div>
+        </div>
+        <div class="mb-3">
+          <div class="input-group">
+            <span class="input-group-text"><i class="feather icon-user"></i></span>
+            <input formControlName="username" type="text" class="form-control" placeholder="Nom d'utilisateur" />
+          </div>
+          <div *ngIf="signupForm.get('username')?.invalid && signupForm.get('username')?.touched" class="text-danger small">Nom d'utilisateur requis</div>
+        </div>
+        <div class="mb-3">
+          <div class="input-group">
+            <span class="input-group-text"><i class="feather icon-mail"></i></span>
+            <input formControlName="email" type="email" class="form-control" placeholder="Email" />
+          </div>
+          <div *ngIf="signupForm.get('email')?.invalid && signupForm.get('email')?.touched" class="text-danger small">Email valide requis</div>
+        </div>
+        <div class="mb-3">
+          <div class="input-group">
+            <span class="input-group-text"><i class="feather icon-phone"></i></span>
+            <input formControlName="phone" type="tel" class="form-control" placeholder="Téléphone" />
+          </div>
+          <div *ngIf="signupForm.get('phone')?.invalid && signupForm.get('phone')?.touched" class="text-danger small">Téléphone requis</div>
+        </div>
+        <button type="button" class="btn btn-primary btn-lg w-100 shadow mb-4" (click)="nextStep()" [disabled]="!signupForm.get('firstName')?.valid || !signupForm.get('lastName')?.valid || !signupForm.get('username')?.valid || !signupForm.get('email')?.valid || !signupForm.get('phone')?.valid">Suivant</button>
+      </ng-container>
+      <ng-container *ngIf="step === 2">
+        <div class="mb-3 position-relative">
+          <div class="input-group">
+            <span class="input-group-text"><i class="feather icon-lock"></i></span>
+            <input [type]="showPassword ? 'text' : 'password'" formControlName="password" class="form-control" placeholder="Mot de passe" />
+            <span class="input-group-text password-toggle" (click)="showPassword = !showPassword" style="cursor:pointer;">
+              <i class="feather" [ngClass]="showPassword ? 'icon-eye-off' : 'icon-eye'"></i>
+            </span>
+          </div>
+          <div *ngIf="signupForm.get('password')?.invalid && signupForm.get('password')?.touched" class="text-danger small">Mot de passe requis (min 6 caractères)</div>
+        </div>
+        <div class="mb-3 position-relative">
+          <div class="input-group">
+            <span class="input-group-text"><i class="feather icon-lock"></i></span>
+            <input [type]="showConfirmPassword ? 'text' : 'password'" formControlName="confirmPassword" class="form-control" placeholder="Confirmer le mot de passe" />
+            <span class="input-group-text password-toggle" (click)="showConfirmPassword = !showConfirmPassword" style="cursor:pointer;">
+              <i class="feather" [ngClass]="showConfirmPassword ? 'icon-eye-off' : 'icon-eye'"></i>
+            </span>
+          </div>
+          <div *ngIf="signupForm.get('confirmPassword')?.invalid && signupForm.get('confirmPassword')?.touched" class="text-danger small">Confirmation requise</div>
+          <div *ngIf="signupForm.errors?.['passwordMismatch'] && signupForm.get('confirmPassword')?.touched" class="text-danger small">Les mots de passe ne correspondent pas</div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Photo de profil</label>
+          <input type="file" (change)="onFileSelected($event)" accept="image/*" class="form-control" />
+          <div *ngIf="selectedImage" class="mt-2 text-center">
+            <img [src]="selectedImage" alt="Aperçu" class="rounded-circle" style="width: 80px; height: 80px; object-fit: cover; border: 2px solid #007bff;" />
+          </div>
+        </div>
+        <div class="form-group text-start mb-3">
+          <div class="checkbox checkbox-fill d-inline">
+            <input type="checkbox" name="checkbox-fill-2" id="checkbox-fill-2" />
+            <label for="checkbox-fill-2" class="cr">
+              Recevoir la <a href="javascript:">newsletter</a> chaque semaine.
+            </label>
+          </div>
+        </div>
+        <div class="d-flex justify-content-between">
+          <button type="button" class="btn btn-outline-secondary" (click)="prevStep()">Précédent</button>
+          <button type="submit" class="btn btn-primary btn-lg shadow" [disabled]="signupForm.invalid">Créer mon compte</button>
+        </div>
+      </ng-container>
+    </form>
+    <p class="mb-0 text-muted mt-4">
+      Déjà inscrit ? <a routerLink="/auth/signin">Se connecter</a>
+    </p>
   </div>
 </div>

@@ -1,70 +1,58 @@
-<form (ngSubmit)="onSubmit()" #loginForm="ngForm">
-  <div class="auth-wrapper">
-    <div class="auth-content">
-      <div class="auth-bg">
-        <span class="r"></span>
-        <span class="r s"></span>
-        <span class="r s"></span>
-        <span class="r"></span>
+
+<div class="signup-2steps-wrapper">
+  <div class="signup-2steps-card">
+    <form (ngSubmit)="onSubmit()" #loginForm="ngForm" autocomplete="off">
+      <div class="text-center mb-4">
+        <i class="feather icon-unlock auth-icon" style="font-size: 2.5rem;"></i>
+        <h2 class="mb-4 font-weight-bold">Connexion</h2>
       </div>
-      <div class="card">
-        <div class="card-body text-center">
-          <div class="mb-4">
-            <i class="feather icon-unlock auth-icon"></i>
-          </div>
-          <h3 class="mb-4">Login</h3>
-
-          <!-- Email -->
-          <div class="input-group mb-3">
-            <input
-              type="email"
-              class="form-control"
-              name="username"
-              [(ngModel)]="username"
-              placeholder="Email"
-              required
-            />
-          </div>
-
-          <!-- Password -->
-          <div class="input-group mb-4">
-            <input
-              type="password"
-              class="form-control"
-              name="password"
-              [(ngModel)]="password"
-              placeholder="Password"
-              required
-            />
-          </div>
-
-          <!-- Checkbox -->
-          <div class="form-group text-start mb-4">
-            <div class="checkbox checkbox-fill d-inline">
-              <input type="checkbox" name="checkbox-fill-1" id="checkbox-fill-a1" checked />
-              <label for="checkbox-fill-a1" class="cr">Save Details</label>
-            </div>
-          </div>
-
-          <!-- Submit Button -->
-          <button type="submit" class="btn btn-primary mb-4" [disabled]="loginForm.invalid">
-            Login
-          </button>
-
-          <!-- Error Message -->
-          <p *ngIf="errorMessage" class="text-danger">{{ errorMessage }}</p>
-
-          <!-- Links -->
-          <p class="mb-2 text-muted">
-            Forgot password?
-            <a [routerLink]="['/auth/reset-password']">Reset</a>
-          </p>
-          <p class="mb-0 text-muted">
-            Don’t have an account?
-            <a [routerLink]="['/auth/signup']">Sign up</a>
-          </p>
+      <div class="mb-3">
+        <div class="input-group">
+          <span class="input-group-text"><i class="feather icon-mail"></i></span>
+          <input
+            type="email"
+            class="form-control"
+            name="username"
+            [(ngModel)]="username"
+            placeholder="Email"
+            required
+          />
         </div>
       </div>
-    </div>
+      <div class="mb-3 position-relative">
+        <div class="input-group">
+          <span class="input-group-text"><i class="feather icon-lock"></i></span>
+          <input
+            [type]="showPassword ? 'text' : 'password'"
+            class="form-control"
+            name="password"
+            [(ngModel)]="password"
+            placeholder="Mot de passe"
+            required
+          />
+          <span class="input-group-text password-toggle" (click)="showPassword = !showPassword" style="cursor:pointer;">
+            <i class="feather" [ngClass]="showPassword ? 'icon-eye-off' : 'icon-eye'"></i>
+          </span>
+        </div>
+      </div>
+      <div class="form-group text-start mb-3">
+        <div class="checkbox checkbox-fill d-inline">
+          <input type="checkbox" name="checkbox-fill-1" id="checkbox-fill-a1" checked />
+          <label for="checkbox-fill-a1" class="cr">Se souvenir de moi</label>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary btn-lg w-100 shadow mb-3" [disabled]="loginForm.invalid">
+        Se connecter
+      </button>
+      <p *ngIf="errorMessage" class="text-danger text-center">{{ errorMessage }}</p>
+      <p class="mb-2 text-muted text-center">
+        Mot de passe oublié ?
+        <a [routerLink]="['/auth/reset-password']">Réinitialiser</a>
+      </p>
+      <p class="mb-0 text-muted text-center">
+        Pas encore de compte ?
+        <a [routerLink]="['/auth/signup']">Créer un compte</a>
+      </p>
+    </form>
   </div>
-</form>
+</div>

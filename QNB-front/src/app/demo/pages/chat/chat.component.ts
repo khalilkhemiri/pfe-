@@ -18,7 +18,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   selectedUser: User | null = null;
   newMessage: string = '';
   currentUser: User = {
-    id: '67fe612de3c8970cb882f1e3',
+    id: '',
     name: 'Tuteur'
   };
   private messageSubscription: Subscription;
@@ -27,6 +27,7 @@ export class ChatComponent implements OnInit, OnDestroy {
     private chatService: ChatService,
     private authService: AuthService
   ) {
+    this.currentUser.id = this.authService.getCurrentUserId();
     this.chatService.initializeUser(this.currentUser.id);
     
     this.messageSubscription = this.chatService.messages$.subscribe(message => {
@@ -159,4 +160,4 @@ export class ChatComponent implements OnInit, OnDestroy {
   formatTime(date: Date): string {
     return new Date(date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   }
-} 
+}

@@ -6,7 +6,7 @@ import { SharedModule } from 'src/app/theme/shared/shared.module';
 import { TacheService } from '../../service/tache/tache.service';
 import { AuthService } from '../../service/auth/auth.service';
 import { ChartConfiguration } from 'chart.js';
-import { BaseChartDirective, provideCharts, withDefaultRegisterables } from 'ng2-charts';
+import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 
 interface Tache {
   id: string;
@@ -38,7 +38,7 @@ interface Stagiaire {
 @Component({
   selector: 'app-stagiaire-dashboard',
   standalone: true,
-  imports: [CommonModule, SharedModule, BaseChartDirective],
+  imports: [CommonModule, SharedModule],
   providers: [provideCharts(withDefaultRegisterables())],
   templateUrl: './stagiaire-dashboard.component.html',
   styleUrls: ['./stagiaire-dashboard.component.scss']
@@ -131,8 +131,8 @@ export class StagiaireDashboardComponent implements OnInit {
   }
 
   loadStagiaireInfo() {
-    this.stagiaireId = '684848c2723f2b2316deef13';
-    console.log('Utilisation de l\'ID statique:', this.stagiaireId);
+    this.stagiaireId = this.authService.getCurrentUserId();
+    console.log('Utilisation de l\'ID dynamique:', this.stagiaireId);
 
     this.authService.getStagiaireById(this.stagiaireId).subscribe({
       next: (stagiaire) => {
@@ -289,6 +289,14 @@ export class StagiaireDashboardComponent implements OnInit {
   }
 
   navigateToChat() {
-    this.router.navigate(['/chat']);
+    this.router.navigate(['/chat/stagiaire']);
   }
-} 
+
+  get rendus(): Tache[] {
+    return this.taches.filter(t => t.statut === 'TERMINEE');
+  }
+
+  get hasRendus(): boolean {
+    return this.rendus.length > 0;
+  }
+}

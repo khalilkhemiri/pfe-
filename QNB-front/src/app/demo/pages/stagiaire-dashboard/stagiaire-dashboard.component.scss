@@ -1,332 +1,184 @@
-.dashboard-container {
-  padding: 1.5rem;
-  background-color: #f8f9fa;
+.stagiaire-dashboard-modern {
+  width: 100%;
   min-height: 100vh;
+  padding: 2.5rem 1rem 3rem 1rem;
+  background: #f8f9fa;
 }
-
-// Profile Section
-.profile-section {
-  margin-bottom: 2rem;
-
-  .profile-card {
-    border: none;
-    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-    border-radius: 1rem;
-    overflow: hidden;
-
-    .profile-image-container {
-      position: relative;
-      width: 100px;
-      height: 100px;
-
-      .profile-image {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        border-radius: 50%;
-        border: 3px solid #fff;
-        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-      }
-
-      .status-indicator {
-        position: absolute;
-        bottom: 5px;
-        right: 5px;
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
-        border: 2px solid #fff;
-
-        &.online {
-          background-color: #28a745;
-        }
-      }
-    }
-
-    .card-body {
-      padding: 1.5rem;
-    }
+.sd-header {
+  display: flex;
+  align-items: center;
+  gap: 2.5rem;
+  background: #fff;
+  border-radius: 2rem;
+  box-shadow: 0 4px 24px #0002;
+  padding: 2.5rem 3rem;
+  margin-bottom: 2.5rem;
+  position: relative;
+  transition: box-shadow 0.3s;
+  &:hover { box-shadow: 0 8px 32px #0003; }
+  .sd-avatar {
+    width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 5px solid #e3e6f0;
+    box-shadow: 0 4px 16px #0001;
+    transition: transform 0.3s;
+    &:hover { transform: scale(1.07); }
+  }
+  .sd-header-info {
+    flex: 1;
+    h2 { margin: 0 0 0.3em 0; font-size: 2em; font-weight: 800; color: #2c3e50; letter-spacing: 0.5px; }
+    .sd-username { color: #4e73df; font-size: 1.15em; margin-bottom: 1em; font-weight: 500; }
+    .btn { margin-top: 0.5em; background: #4e73df; color: #fff; border-radius: 0.7em; font-weight: 600; box-shadow: 0 2px 8px #4e73df33; transition: background 0.2s; &:hover { background: #2c3e50; } }
+  }
+  .sd-progress-circle {
+    min-width: 100px; text-align: center;
+    svg { width: 100px; height: 100px; }
+    .circle-bg { fill: none; stroke: #eee; stroke-width: 4; }
+    .circle { fill: none; stroke: #4e73df; stroke-width: 4; stroke-linecap: round; transition: stroke-dasharray 0.4s; }
+    .percentage { font-size: 1.2em; fill: #222; font-weight: 700; text-anchor: middle; dominant-baseline: middle; }
+    .sd-progress-label { font-size: 1em; color: #6c757d; margin-top: 0.3em; }
   }
 }
-
-// Stats Section
-.stats-section {
-  margin-bottom: 2rem;
-
-  .card {
-    border: none;
-    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-    border-radius: 1rem;
-    overflow: hidden;
-    height: 100%;
-
-    .card-body {
-      padding: 1.5rem;
-    }
-
-    .card-title {
-      font-size: 1.1rem;
-      font-weight: 600;
-      margin-bottom: 1.5rem;
-      color: #2c3e50;
-    }
-
-    .chart-container {
-      position: relative;
-      height: 250px;
-      margin-bottom: 1rem;
-    }
-
-    .progress-stats {
-      .stat-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0.5rem 0;
-        border-bottom: 1px solid #eee;
-
-        &:last-child {
-          border-bottom: none;
-        }
-
-        .stat-label {
-          color: #6c757d;
-          font-size: 0.9rem;
-        }
-
-        .stat-value {
-          font-weight: 600;
-          color: #2c3e50;
-        }
-      }
-    }
+.sd-stats-cards {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 2.5rem;
+  justify-content: center;
+  .sd-stat-card {
+    flex: 1 1 120px;
+    background: linear-gradient(120deg, #fff 60%, #e3e6f0 100%);
+    border-radius: 1.5rem;
+    box-shadow: 0 4px 16px #0001;
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    padding: 1.5rem 2rem;
+    min-width: 120px;
+    transition: box-shadow 0.3s, transform 0.3s;
+    &:hover { box-shadow: 0 8px 32px #4e73df22; transform: translateY(-4px) scale(1.03); }
+    i { font-size: 2em; color: #4e73df; }
+    .stat-label { color: #6c757d; font-size: 1.05em; font-weight: 500; }
+    .stat-value { font-size: 1.5em; font-weight: 800; color: #2c3e50; }
   }
 }
-
-// Urgent Tasks Section
-.urgent-tasks-section {
-  .card {
-    border: none;
-    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-    border-radius: 1rem;
-    overflow: hidden;
-
-    .card-body {
-      padding: 1.5rem;
-    }
-
-    .card-title {
-      font-size: 1.1rem;
-      font-weight: 600;
-      margin-bottom: 1.5rem;
-      color: #2c3e50;
-    }
-  }
-
-  .urgent-tasks {
-    .urgent-task-item {
-      padding: 1rem;
-      border-radius: 0.5rem;
-      background-color: #fff;
-      border: 1px solid #eee;
-      margin-bottom: 1rem;
-      cursor: pointer;
-      transition: all 0.2s ease;
-
-      &:hover {
-        transform: translateX(5px);
-        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-      }
-
-      .urgent-indicator {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background-color: #dc3545;
-        animation: pulse 2s infinite;
-      }
-
-      h6 {
-        margin: 0;
-        color: #2c3e50;
-      }
-
-      .badge {
-        font-weight: 500;
-        padding: 0.5em 1em;
-      }
-    }
-  }
+.sd-section-title {
+  font-size: 1.25em;
+  font-weight: 800;
+  color: #2c3e50;
+  margin-bottom: 1.2em;
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  letter-spacing: 0.5px;
 }
-
-// Activity Feed
-.activity-feed {
-  .feed-item {
-    padding: 1rem;
-    border-left: 2px solid var(--bs-border-color);
-    margin-left: 1rem;
+.sd-timeline-section {
+  margin-bottom: 2.5rem;
+  .sd-timeline {
+    border-left: 3px solid #4e73df22;
+    margin-left: 1.2em;
+    padding-left: 1.5em;
     position: relative;
-    margin-bottom: 1rem;
-
-    &:before {
-      content: '';
-      position: absolute;
-      left: -6px;
-      top: 1.5rem;
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background-color: var(--bs-primary);
-    }
-
-    .date {
-      margin-bottom: 0.5rem;
-    }
-
-    .text {
-      font-size: 0.9rem;
+    .sd-timeline-item {
+      position: relative;
+      margin-bottom: 2.2em;
+      padding-left: 0.5em;
+      transition: box-shadow 0.3s;
+      &:hover .sd-timeline-content { box-shadow: 0 8px 32px #36b9cc22; }
+      .sd-timeline-dot {
+        position: absolute; left: -2.1em; top: 0.5em;
+        width: 1.2em; height: 1.2em; border-radius: 50%; background: #fff; border: 3px solid #4e73df;
+        box-shadow: 0 2px 8px #0001;
+      }
+      .sd-timeline-content {
+        background: #fff;
+        border-radius: 1.2em;
+        box-shadow: 0 2px 8px #0001;
+        padding: 1.5em 2em;
+        .sd-timeline-header {
+          display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5em;
+          .sd-tache-titre { font-weight: 700; font-size: 1.15em; color: #2c3e50; }
+          .sd-tache-date { color: #36b9cc; font-size: 1em; font-weight: 500; }
+        }
+        .sd-tache-desc { color: #6c757d; font-size: 1.05em; margin-bottom: 0.7em; }
+        .sd-tache-status { margin-bottom: 0.5em; }
+        .badge { font-size: 1em; font-weight: 600; padding: 0.4em 1em; border-radius: 0.7em; }
+        .bg-success-subtle { background: #e6f9f0; color: #1cc88a; }
+        .bg-warning-subtle { background: #fff8e1; color: #f6c23e; }
+        .bg-info-subtle { background: #e3e6f0; color: #36b9cc; }
+        .bg-danger { background: #ffe5e5; color: #e74a3b; }
+        .btn { margin-top: 0.5em; background: #36b9cc; color: #fff; border-radius: 0.7em; font-weight: 600; box-shadow: 0 2px 8px #36b9cc33; transition: background 0.2s; &:hover { background: #e74a3b; } }
+      }
     }
   }
 }
-
-// Table Styles
-.table {
-  th {
-    font-weight: 600;
-    text-transform: uppercase;
-    font-size: 0.8rem;
-    letter-spacing: 0.5px;
+.sd-rendus-section {
+  margin-bottom: 2.5rem;
+  .sd-rendus-list {
+    display: flex; flex-wrap: wrap; gap: 1.5em;
+    .sd-rendu-item {
+      background: linear-gradient(120deg, #fff 60%, #e3e6f0 100%);
+      border-radius: 1.2em;
+      box-shadow: 0 2px 8px #0001;
+      padding: 1.5em 2em;
+      min-width: 220px;
+      flex: 1 1 220px;
+      transition: box-shadow 0.3s, transform 0.3s;
+      &:hover { box-shadow: 0 8px 32px #1cc88a22; transform: translateY(-4px) scale(1.03); }
+      .rendu-titre { font-weight: 700; color: #2c3e50; font-size: 1.1em; }
+      .rendu-date { color: #36b9cc; font-size: 1em; margin-bottom: 0.5em; font-weight: 500; }
+      .rendu-status { margin-top: 0.5em; }
+      .badge { font-size: 1em; font-weight: 600; padding: 0.4em 1em; border-radius: 0.7em; }
+    }
   }
-
-  td {
-    vertical-align: middle;
+}
+.sd-notifications {
+  background: linear-gradient(90deg, #fffbe6 80%, #fff 100%);
+  border-radius: 1.2rem;
+  box-shadow: 0 2px 8px #0001;
+  padding: 1.2rem 2rem;
+  margin-bottom: 2rem;
+  color: #856404;
+  font-size: 1.1em;
+  display: flex;
+  align-items: center;
+  gap: 0.7em;
+  i { font-size: 1.5em; }
+}
+.sd-simple-graph {
+  background: linear-gradient(120deg, #fff 60%, #e3e6f0 100%);
+  border-radius: 1.2rem;
+  box-shadow: 0 2px 8px #0001;
+  padding: 2rem 2.5rem;
+  margin-bottom: 2.5rem;
+  .sd-section-title {
+    font-size: 1.2em;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 1.2em;
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
   }
-
-  .badge {
-    padding: 0.5em 1em;
-    font-weight: 500;
-  }
-
-  .progress {
-    width: 100px;
+  svg {
+    display: block;
     margin: 0 auto;
+    max-width: 340px;
+    width: 100%;
+    height: 120px;
+  }
+  text {
+    font-family: inherit;
+    font-weight: 600;
+    fill: #2c3e50;
   }
 }
-
-// Animations
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.5);
-    opacity: 0.5;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
+@media (max-width: 900px) {
+  .stagiaire-dashboard-modern { padding: 1rem 0.2rem; }
+  .sd-header { flex-direction: column; gap: 1.2rem; text-align: center; padding: 1.2rem 0.5rem; }
+  .sd-progress-circle { margin: 1.2em auto 0 auto; }
+  .sd-stats-cards { flex-direction: column; gap: 1rem; }
 }
-
-// Responsive Adjustments
-@media (max-width: 768px) {
-  .dashboard-container {
-    padding: 1rem;
-  }
-
-  .profile-section {
-    .profile-image-container {
-      width: 80px;
-      height: 80px;
-    }
-  }
-
-  .stats-section {
-    .chart-container {
-      height: 200px;
-    }
-  }
+@media (max-width: 600px) {
+  .stagiaire-dashboard-modern { padding: 0.5rem 0.1rem; }
+  .sd-header { padding: 0.7rem 0.2rem; }
+  .sd-stats-cards { gap: 0.7rem; }
+  .sd-timeline-section, .sd-rendus-section { margin-bottom: 1.2rem; }
 }
-
-// Upcoming Tasks Section
-.upcoming-tasks-section {
-  margin-top: 2rem;
-
-  .card {
-    border: none;
-    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-    border-radius: 1rem;
-    overflow: hidden;
-
-    .card-body {
-      padding: 1.5rem;
-    }
-
-    .card-title {
-      font-size: 1.1rem;
-      font-weight: 600;
-      margin-bottom: 1.5rem;
-      color: #2c3e50;
-    }
-  }
-
-  .calendar-header {
-    .date-range {
-      font-size: 0.9rem;
-      color: #6c757d;
-    }
-  }
-
-  .upcoming-tasks-list {
-    .upcoming-task-item {
-      padding: 1rem;
-      border-radius: 0.5rem;
-      background-color: #fff;
-      border: 1px solid #eee;
-      margin-bottom: 1rem;
-      cursor: pointer;
-      transition: all 0.2s ease;
-
-      &:hover {
-        transform: translateX(5px);
-        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-      }
-
-      .date-badge {
-        width: 60px;
-        height: 60px;
-        background-color: #f8f9fa;
-        border-radius: 0.5rem;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 0.5rem;
-
-        .day {
-          font-size: 1.2rem;
-          font-weight: 600;
-          color: #2c3e50;
-          line-height: 1;
-        }
-
-        .month {
-          font-size: 0.8rem;
-          color: #6c757d;
-          text-transform: uppercase;
-        }
-      }
-
-      h6 {
-        margin: 0;
-        color: #2c3e50;
-      }
-
-      .badge {
-        font-weight: 500;
-        padding: 0.5em 1em;
-      }
-    }
-  }
-} 

@@ -1,64 +1,78 @@
-<div class="tache-form-container">
+<div class="tache-form-card">
+  <div class="form-header-modern">
+    <mat-icon class="header-icon">assignment</mat-icon>
+    <h2 class="form-title">Créer & Assigner une Tâche</h2>
+    <p class="form-subtitle">Remplissez les informations ci-dessous pour créer une nouvelle tâche et l’assigner à un ou plusieurs stagiaires.</p>
+  </div>
+
   <form [formGroup]="tacheForm" (ngSubmit)="onSubmit()">
-    <h2 class="form-title">Créer une Tâche</h2>
-
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Titre</mat-label>
-      <input matInput formControlName="titre" placeholder="Entrez le titre de la tâche" />
-    </mat-form-field>
-
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Description</mat-label>
-      <textarea matInput formControlName="description" placeholder="Entrez la description"></textarea>
-    </mat-form-field>
-    <!-- Date de début -->
-    <div class="row">
-      <mat-form-field appearance="outline" class="half-width">
-        <mat-label>Date de début</mat-label>
-        <input matInput [matDatepicker]="dp1" formControlName="dateDebut" />
-        <mat-datepicker-toggle matSuffix [for]="dp1"></mat-datepicker-toggle>
-        <mat-datepicker #dp1></mat-datepicker>
+    <div class="form-section">
+      <h3><mat-icon>info</mat-icon> Informations générales</h3>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Titre</mat-label>
+        <input matInput formControlName="titre" placeholder="Entrez le titre de la tâche" />
       </mat-form-field>
-  
-      <mat-form-field appearance="outline" class="half-width">
-        <mat-label>Heure de début</mat-label>
-        <input matInput [ngxMatTimepicker]="tp1" formControlName="heureDebut" />
-        <ngx-mat-timepicker #tp1></ngx-mat-timepicker>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Description</mat-label>
+        <textarea matInput formControlName="description" placeholder="Entrez la description"></textarea>
       </mat-form-field>
     </div>
-  
-    <div class="row">
-      <mat-form-field appearance="outline" class="half-width">
-        <mat-label>Date de fin</mat-label>
-        <input matInput [matDatepicker]="dp2" formControlName="dateFin" />
-        <mat-datepicker-toggle matSuffix [for]="dp2"></mat-datepicker-toggle>
-        <mat-datepicker #dp2></mat-datepicker>
-      </mat-form-field>
-  
-      <mat-form-field appearance="outline" class="half-width">
-        <mat-label>Heure de fin</mat-label>
-        <input matInput [ngxMatTimepicker]="tp2" formControlName="heureFin" />
-        <ngx-mat-timepicker #tp2></ngx-mat-timepicker>
+
+    <div class="form-section">
+      <h3><mat-icon>calendar_today</mat-icon> Dates & Heures</h3>
+      <div class="row">
+        <mat-form-field appearance="outline" class="half-width">
+          <mat-label>Date de début</mat-label>
+          <input matInput [matDatepicker]="dp1" formControlName="dateDebut" />
+          <mat-datepicker-toggle matSuffix [for]="dp1"></mat-datepicker-toggle>
+          <mat-datepicker #dp1></mat-datepicker>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="half-width">
+          <mat-label>Heure de début</mat-label>
+          <input matInput [ngxMatTimepicker]="tp1" formControlName="heureDebut" />
+          <ngx-mat-timepicker #tp1></ngx-mat-timepicker>
+        </mat-form-field>
+      </div>
+      <div class="row">
+        <mat-form-field appearance="outline" class="half-width">
+          <mat-label>Date de fin</mat-label>
+          <input matInput [matDatepicker]="dp2" formControlName="dateFin" />
+          <mat-datepicker-toggle matSuffix [for]="dp2"></mat-datepicker-toggle>
+          <mat-datepicker #dp2></mat-datepicker>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="half-width">
+          <mat-label>Heure de fin</mat-label>
+          <input matInput [ngxMatTimepicker]="tp2" formControlName="heureFin" />
+          <ngx-mat-timepicker #tp2></ngx-mat-timepicker>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h3><mat-icon>group</mat-icon> Assignation</h3>
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Stagiaires</mat-label>
+        <mat-select formControlName="stagiairesIds" multiple required>
+          <mat-option *ngFor="let stagiaire of stagiaires" [value]="stagiaire.id">
+            <img *ngIf="stagiaire.image" [src]="stagiaire.image" class="avatar" alt="avatar" />
+            <span *ngIf="!stagiaire.image" class="avatar-initials">{{ stagiaire.username[0] }}</span>
+            <span class="stagiaire-name">{{ stagiaire.username }}</span>
+          </mat-option>
+        </mat-select>
       </mat-form-field>
     </div>
-    <mat-form-field appearance="fill">
-      <mat-label>Assignation des stagiaires</mat-label>
-      <mat-select formControlName="stagiairesIds" name="stagiairesIds" multiple required>
-        <mat-option *ngFor="let stagiaire of stagiaires" [value]="stagiaire.id">
-          {{ stagiaire.username }} 
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-    
-  
-    <mat-form-field appearance="outline" class="full-width">
-      <mat-label>Statut</mat-label>
-      <mat-select formControlName="statut">
-        <mat-option *ngFor="let s of statuts" [value]="s">{{ s }}</mat-option>
-      </mat-select>
-    </mat-form-field>
 
-    <button mat-raised-button color="primary" class="submit-btn" [disabled]="tacheForm.invalid">
+    <div class="form-section">
+      <h3><mat-icon>flag</mat-icon> Statut</h3>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Statut</mat-label>
+        <mat-select formControlName="statut">
+          <mat-option *ngFor="let s of statuts" [value]="s">{{ s }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <button mat-raised-button color="primary" class="submit-btn-modern" [disabled]="tacheForm.invalid">
       <mat-icon>add_task</mat-icon>
       Créer la tâche
     </button>

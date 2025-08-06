@@ -166,7 +166,7 @@ export class DashboardComponent implements OnInit {
   }
 
   navigateToTaches(stagiaireId: string) {
-    this.router.navigate(['/tache'], { queryParams: { stagiaireId } });
+    this.router.navigate(['/tuteur/taches-stagiaire', stagiaireId]);
   }
 
   // Statistiques pour les cartes

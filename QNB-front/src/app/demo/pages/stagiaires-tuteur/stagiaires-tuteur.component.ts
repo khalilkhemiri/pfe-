@@ -19,11 +19,10 @@ export class StagiairesTuteurComponent implements OnInit {
   constructor(private stagiaireService: AuthService) {}
 
   ngOnInit() {
-    // TODO: Récupérer l'ID du tuteur depuis le service d'authentification
-    const tuteurId = '67fe612de3c8970cb882f1e3'; // À remplacer par l'ID réel du tuteur connecté
+    const tuteurId = this.stagiaireService.getCurrentUserId();
     this.loadStagiaires(tuteurId);
   }
-
+  
   loadStagiaires(tuteurId: string) {
     this.stagiaireService.getStagiairesByTuteur(tuteurId).subscribe({
       next: (data) => {
