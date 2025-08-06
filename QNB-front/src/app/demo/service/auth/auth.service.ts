@@ -19,14 +19,14 @@ export interface Stagiaire {
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:8080/api/auth/signup';  // Remplace par ton URL d'API
-  private apiUrl1 = 'http://localhost:8080/api/auth';  // Remplace par ton URL d'API
+  private apiUrl = 'http://192.168.5.128:31615/api/auth/signup';  // Remplace par ton URL d'API
+  private apiUrl1 = 'http://192.168.5.128:31615/api/auth';  // Remplace par ton URL d'API
 
   constructor(private http: HttpClient,private router: Router) { }
 
   
   signupWithImage(formData: FormData) {
-    return this.http.post('http://localhost:8080/api/auth/signup', formData, { responseType: 'text' });
+    return this.http.post('http://192.168.5.128:31615/api/auth/signup', formData, { responseType: 'text' });
   }
   
   
