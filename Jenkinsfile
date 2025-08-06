@@ -35,8 +35,6 @@ pipeline {
       }
     }
 
-    
-        
     stage('Docker Build & Push Backend') {
       steps {
         script {
@@ -58,7 +56,6 @@ pipeline {
           echo "🧱 Building and pushing frontend Docker image..."
           docker.withRegistry('https://index.docker.io/v1/', 'dockerhub') {
             dir('QNB-front') {
-              // Le dossier généré est dist/datta-able-free-angular-admin-template
               def image = docker.build("${IMAGE_NAME_FRONT}:${env.BUILD_NUMBER}", "--build-arg BUILD_DIR=dist/datta-able-free-angular-admin-template .")
               image.push()
               image.push("latest")
@@ -67,27 +64,32 @@ pipeline {
         }
       }
     }
-    
-   stage('Kubernetes Deploy') {
-  steps {
-    script {
-      echo "🚀 Deploying backend and frontend to Kubernetes..."
 
-      // Assure que KUBECONFIG est bien exporté
-      sh 'export KUBECONFIG=~/k3s.yaml && kubectl apply -f K8s/backend-deployment.yml'
-      sh 'export KUBECONFIG=~/k3s.yaml && kubectl apply -f K8s/backend-service.yml'
-      sh 'export KUBECONFIG=~/k3s.yaml && kubectl apply -f K8s/frontend-deployment.yml'
-      sh 'export KUBECONFIG=~/k3s.yaml && kubectl apply -f K8s/frontend-service.yml'
-      sh 'export KUBECONFIG=~/k3s.yaml && kubectl apply -f K8s/ingress.yaml'
+    stage('Kubernetes Deploy') {
+      steps {
+        script {
+          echo "🚀 Deploying backend and frontend to Kubernetes..."
 
-      // Vérification (optionnel)
-      sh 'export KUBECONFIG=~/k3s.yaml && kubectl get pods'
-      sh 'export KUBECONFIG=~/k3s.yaml && kubectl get svc'
-      sh 'export KUBECONFIG=~/k3s.yaml && kubectl get ingress'
+          def kubeConfig = 'export KUBECONFIG=~/k3s.yaml'
+
+          // Apply manifests
+          sh "${kubeConfig} && kubectl apply -f K8s/backend-deployment.yml"
+          sh "${kubeConfig} && kubectl apply -f K8s/backend-service.yml"
+          sh "${kubeConfig} && kubectl apply -f K8s/frontend-deployment.yml"
+          sh "${kubeConfig} && kubectl apply -f K8s/frontend-service.yml"
+          sh "${kubeConfig} && kubectl apply -f K8s/ingress.yaml"
+
+          // 🔁 Forcer le restart pour appliquer la nouvelle image
+          sh "${kubeConfig} && kubectl rollout restart deployment pfe-backend"
+          sh "${kubeConfig} && kubectl rollout restart deployment pfe-frontend"
+
+          // 🧪 Vérification (optionnel)
+          sh "${kubeConfig} && kubectl get pods"
+          sh "${kubeConfig} && kubectl get svc"
+          sh "${kubeConfig} && kubectl get ingress"
+        }
+      }
     }
-  }
-}
- 
   }
 
   post {
