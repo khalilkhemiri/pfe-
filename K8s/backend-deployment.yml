@@ -17,6 +17,7 @@ spec:
       containers:
         - name: pfe-backend
           image: khalilkh/pfe-back:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
           env:
