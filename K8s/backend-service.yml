@@ -5,8 +5,8 @@ metadata:
 spec:
   selector:
     app: pfe-backend
+  type: NodePort
   ports:
-    - protocol: TCP
-      port: 8080
+    - port: 8080
       targetPort: 8080
-  type: ClusterIP
+      nodePort: 31615
