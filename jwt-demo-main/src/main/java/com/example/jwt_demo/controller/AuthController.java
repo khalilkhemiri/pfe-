@@ -57,7 +57,7 @@ public class AuthController {
         );
 
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String token = jwtUtils.generateToken(userDetails.getUsername(), existingUser.getRole());
+        String token = jwtUtils.generateToken(userDetails.getUsername(), existingUser.getId(), existingUser.getRole());
 
         Map<String, String> response = new HashMap<>();
         response.put("token", token);
@@ -148,6 +148,16 @@ public class AuthController {
             return ResponseEntity.ok(stagiaire.get());
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Stagiaire non trouvé");
+    }
+
+    @GetMapping("/stagiaires")
+    public List<User> getAllStagiaires() {
+        return userRepository.findByRole(UserRole.STAGIAIRE);
+    }
+
+    @GetMapping("/tuteurs")
+    public List<User> getAllTuteurs() {
+        return userRepository.findByRole(UserRole.TUTEUR);
     }
 
 }

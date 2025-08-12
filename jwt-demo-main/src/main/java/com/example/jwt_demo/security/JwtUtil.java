@@ -31,10 +31,11 @@ public class JwtUtil {
     }
 
     // Generate JWT token
-    public String generateToken(String username , UserRole role) {
+    public String generateToken(String username, String userId, UserRole role) {
 
         return Jwts.builder()
                 .setSubject(username)
+                .claim("id", userId)
                 .claim("roles", List.of(role.name()))
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
@@ -49,6 +50,15 @@ public class JwtUtil {
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
+    }
+
+    // Get user ID from JWT token
+    public String getUserIdFromToken(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key).build()
+                .parseClaimsJws(token)
+                .getBody()
+                .get("id", String.class);
     }
 
     // Validate JWT token

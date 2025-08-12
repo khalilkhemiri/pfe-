@@ -36,4 +36,36 @@ public class CustomUserDetailsService  implements UserDetailsService {
 
         mailSender.send(message);
     }
+
+    public void sendTacheAssignedNotification(String stagiaireEmail, String tacheTitre) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("khalilkhemiri681@gmail.com");
+        message.setTo(stagiaireEmail);
+        message.setSubject("Nouvelle tâche à réaliser !");
+        message.setText(
+                "Bonjour,\n\n" +
+                        "Vous venez de recevoir une nouvelle tâche à réaliser sur la plateforme QNB.\n\n" +
+                        "Titre de la tâche : " + tacheTitre + "\n\n" +
+                        "Merci de vous connecter à votre espace personnel pour consulter les détails et commencer votre travail.\n\n" +
+                        "Bonne chance et n'hésitez pas à contacter votre tuteur en cas de besoin !\n\n" +
+                        "Cordialement,\nL'équipe QNB"
+        );
+        mailSender.send(message);
+    }
+    public void sendMeetingInvitation(String stagiaireEmail, String meetingTitle, String meetingDate, String meetingLink) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("khalilkhemiri681@gmail.com");
+        message.setTo(stagiaireEmail); // envoyer directement au stagiaire
+        message.setSubject("Invitation à la réunion : " + meetingTitle);
+        message.setText(
+                "Bonjour,\n\n" +
+                        "Vous êtes invité à une réunion.\n\n" +
+                        "📌 Sujet : " + meetingTitle + "\n" +
+                        "📅 Date et heure : " + meetingDate + "\n" +
+                        "🔗 Lien de connexion : " + meetingLink + "\n\n" +
+                        "Merci."
+        );
+
+        mailSender.send(message);
+    }
 }
