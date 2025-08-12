@@ -35,17 +35,6 @@ pipeline {
       }
     }
 
-    stage('SonarQube Analysis') {
-      steps {
-        dir('jwt-demo-main') {
-          withSonarQubeEnv('MySonarQubeServer') {
-            echo "🔎 Running SonarQube analysis..."
-            sh './mvnw sonar:sonar -Dsonar.login=$SONAR_TOKEN'
-          }
-        }
-      }
-    }
-        
     stage('Docker Build & Push Backend') {
       steps {
         script {
@@ -67,7 +56,6 @@ pipeline {
           echo "🧱 Building and pushing frontend Docker image..."
           docker.withRegistry('https://index.docker.io/v1/', 'dockerhub') {
             dir('QNB-front') {
-              // Le dossier généré est dist/datta-able-free-angular-admin-template
               def image = docker.build("${IMAGE_NAME_FRONT}:${env.BUILD_NUMBER}", "--build-arg BUILD_DIR=dist/datta-able-free-angular-admin-template .")
               image.push()
               image.push("latest")
@@ -76,21 +64,29 @@ pipeline {
         }
       }
     }
-    
-    stage('Trivy Scan Docker Images') {
+
+    stage('Kubernetes Deploy') {
       steps {
         script {
-          echo "🔍 Scanning Docker images with Trivy..."
+          echo "🚀 Deploying backend and frontend to Kubernetes..."
 
-          // Scanner l'image frontend
-          sh "trivy image --severity CRITICAL,HIGH --format json --output trivy-report-frontend.json ${IMAGE_NAME_FRONT}:latest"
+          def kubeConfig = 'export KUBECONFIG=~/k3s.yaml'
 
-          // Scanner l'image backend
-          sh "trivy image --severity CRITICAL,HIGH --format json --output trivy-report-backend.json ${IMAGE_NAME_BACK}:latest"
+          // Apply manifests
+          sh "${kubeConfig} && kubectl apply -f K8s/backend-deployment.yml"
+          sh "${kubeConfig} && kubectl apply -f K8s/backend-service.yml"
+          sh "${kubeConfig} && kubectl apply -f K8s/frontend-deployment.yml"
+          sh "${kubeConfig} && kubectl apply -f K8s/frontend-service.yml"
+          sh "${kubeConfig} && kubectl apply -f K8s/ingress.yaml"
 
-          // Afficher les rapports dans la console Jenkins
-          sh 'cat trivy-report-frontend.json'
-          sh 'cat trivy-report-backend.json'
+          // 🔁 Forcer le restart pour appliquer la nouvelle image
+          sh "${kubeConfig} && kubectl rollout restart deployment pfe-backend"
+          sh "${kubeConfig} && kubectl rollout restart deployment pfe-frontend"
+
+          // 🧪 Vérification (optionnel)
+          sh "${kubeConfig} && kubectl get pods"
+          sh "${kubeConfig} && kubectl get svc"
+          sh "${kubeConfig} && kubectl get ingress"
         }
       }
     }
