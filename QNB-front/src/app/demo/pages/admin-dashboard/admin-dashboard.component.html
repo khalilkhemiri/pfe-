@@ -80,25 +80,37 @@
           </thead>
           <tbody>
             <tr *ngFor="let user of filteredUsers">
-              <td>{{ user.username }}</td>
+              <td>
+                <div style="display:flex;align-items:center;gap:0.8rem;">
+                  <img *ngIf="user.image" [src]="user.image" alt="avatar" style="width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid #f0f1f6;"/>
+                  <div>
+                    <div style="font-weight:600;color:#222;">{{ user.username }}</div>
+                    <div style="font-size:0.82rem;color:#6c757d;">{{ user.email }}</div>
+                  </div>
+                </div>
+              </td>
               <td>{{ user.email }}</td>
               <td>{{ user.phone || '-' }}</td>
               <td>{{ user.role }}</td>
               <td>
-                <span class="badge" [ngClass]="{
-                  'bg-success': user.active === 'true',
-                  'bg-danger': user.active === 'false',
-                  'bg-secondary': !user.active
-                }">
-                  {{ user.active || 'N/A' }}
-                  </span>
+                <span class="badge"
+                  [ngClass]="{
+                    'bg-success': user.active === true || user.active === 'true' || user.status === 'active',
+                    'bg-danger': user.active === false || user.active === 'false' || user.status === 'inactive' || user.status === 'blocked',
+                    'bg-secondary': user.active == null || user.active === undefined
+                  }">
+                  {{ (user.active === true || user.active === 'true' || user.status === 'active') ? 'Actif' : ((user.active === false || user.active === 'false' || user.status === 'inactive' || user.status === 'blocked') ? 'Inactif' : 'N/A') }}
+                </span>
               </td>
               <td>{{ user.createdAt | date:'dd/MM/yyyy' }}</td>
               <td>
-                <button class="btn btn-sm btn-outline-primary me-1" title="Voir profil"><i class="fas fa-eye"></i></button>
+                <button class="btn btn-sm btn-outline-primary me-1" (click)="openProfile(user)" title="Voir profil"><i class="fas fa-user-circle"></i></button>
                 <button class="btn btn-sm" [ngClass]="user.status === 'active' ? 'btn-outline-danger' : 'btn-outline-success'" (click)="onToggleUserStatus(user)">
                   <i class="fas" [ngClass]="user.status === 'active' ? 'fa-user-slash' : 'fa-user-check'"></i>
-              </button>
+                </button>
+                <button class="btn btn-sm btn-outline-danger ms-2" title="Supprimer" (click)="openConfirm('delete', user)">
+                  <i class="fas fa-trash"></i>
+                </button>
               </td>
             </tr>
             <tr *ngIf="filteredUsers.length === 0">
@@ -132,8 +144,15 @@
               <td>{{ user.role }}</td>
               <td>{{ user.createdAt | date:'dd/MM/yyyy' }}</td>
               <td>
-                <button class="btn btn-sm btn-outline-success me-1" (click)="onApproveUser(user)"><i class="fas fa-check"></i> Valider</button>
-                <button class="btn btn-sm btn-outline-danger" (click)="onRejectUser(user)"><i class="fas fa-times"></i> Refuser</button>
+                <div class="d-flex gap-2 align-items-center">
+                  <select class="form-select form-select-sm" [(ngModel)]="user._selectedRole">
+                    <option value="STAGIAIRE">Stagiaire</option>
+                    <option value="TUTEUR">Tuteur</option>
+                    <option value="ADMIN">Admin</option>
+                  </select>
+                  <button class="btn btn-sm btn-outline-success me-1" (click)="onApproveUser(user)"><i class="fas fa-check"></i> Valider</button>
+                  <button class="btn btn-sm btn-outline-danger" (click)="onRejectUser(user)"><i class="fas fa-times"></i> Refuser</button>
+                </div>
               </td>
             </tr>
             <tr *ngIf="pendingUsers.length === 0">
@@ -145,4 +164,65 @@
     </div>
 
   </div>
+
+  <!-- Confirmation modal (styled) -->
+  <div *ngIf="showConfirmModal" class="confirm-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="confirmTitle" style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.45);z-index:2000;">
+    <div class="card" style="width:100%;max-width:520px;border-radius:8px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,0.25);">
+      <div class="card-header bg-light" style="display:flex;align-items:center;justify-content:space-between;">
+        <h5 id="confirmTitle" style="margin:0;font-weight:600;">{{ confirmTitle }}</h5>
+        <button class="btn btn-sm btn-link text-muted" (click)="cancelConfirm()" aria-label="Fermer">✕</button>
+      </div>
+      <div class="card-body">
+        <p class="mb-0">{{ confirmMessage }}</p>
+      </div>
+      <div class="card-footer text-end" style="background:#fff;">
+        <button class="btn btn-secondary me-2" (click)="cancelConfirm()">Annuler</button>
+        <button class="btn btn-primary" (click)="confirm()">Confirmer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Profile modal -->
+  <div *ngIf="showProfileModal" class="confirm-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="profileTitle" style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.45);z-index:2000;">
+    <div class="card" style="width:100%;max-width:680px;border-radius:8px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,0.25);">
+      <div class="card-header bg-light" style="display:flex;align-items:center;justify-content:space-between;">
+        <h5 id="profileTitle" style="margin:0;font-weight:600;">Profil utilisateur</h5>
+        <button class="btn btn-sm btn-link text-muted" (click)="cancelProfile()" aria-label="Fermer">✕</button>
+      </div>
+      <div class="card-body">
+        <div style="display:flex;gap:1.2rem;align-items:flex-start;">
+          <div style="flex:0 0 110px;">
+            <img *ngIf="profileUser?.image" [src]="profileUser.image" alt="avatar" style="width:100px;height:100px;border-radius:8px;object-fit:cover;border:2px solid #f0f1f6;"/>
+          </div>
+          <div style="flex:1;">
+            <div class="mb-2">
+              <label class="form-label">Nom d'utilisateur</label>
+              <input class="form-control" [(ngModel)]="profileUser.username" />
+            </div>
+            <div class="mb-2">
+              <label class="form-label">Email</label>
+              <input class="form-control" [(ngModel)]="profileUser.email" />
+            </div>
+            <div class="mb-2">
+              <label class="form-label">Téléphone</label>
+              <input class="form-control" [(ngModel)]="profileUser.phone" />
+            </div>
+            <div class="mb-2">
+              <label class="form-label">Rôle</label>
+              <select class="form-select" [(ngModel)]="profileUser.role">
+                <option value="STAGIAIRE">Stagiaire</option>
+                <option value="TUTEUR">Tuteur</option>
+                <option value="ADMIN">Admin</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer text-end" style="background:#fff;">
+        <button class="btn btn-secondary me-2" (click)="cancelProfile()">Annuler</button>
+        <button class="btn btn-primary" (click)="saveProfile()">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+
 </div>

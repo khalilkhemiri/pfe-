@@ -32,3 +32,83 @@
         background-color: #0056b3;
     }
 }
+
+.event-modal-overlay .event-modal {
+  animation: popIn 160ms ease-out;
+}
+
+@keyframes popIn {
+  from { transform: translateY(8px) scale(0.98); opacity: 0 }
+  to { transform: translateY(0) scale(1); opacity: 1 }
+}
+
+.event-modal .event-modal-header h4 { font-weight: 700; }
+.event-modal .btn-info { background: #17a2b8; border-color: #17a2b8; color: #fff; }
+
+/* small responsive tweak */
+@media (max-width: 640px) {
+  .event-modal { margin: 12px; width: calc(100% - 24px); }
+}
+
+/* Modern event modal styles */
+.event-modal-overlay.modern {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, rgba(8,10,20,0.40), rgba(8,10,20,0.38));
+  z-index: 2100;
+}
+.event-modal-modern {
+  width: 100%;
+  max-width: 720px;
+  margin: 0 16px;
+  border-radius: 12px;
+  overflow: visible;
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  box-shadow: 0 20px 60px rgba(10,12,20,0.6);
+  transform: translateY(-6px);
+  animation: modalPop 220ms cubic-bezier(.2,.9,.3,1);
+}
+
+.event-modal-modern .accent {
+  width: 6px;
+  border-top-left-radius: 12px;
+  border-bottom-left-radius: 12px;
+  background: #6c757d;
+}
+.event-modal-modern .accent[data-type='meeting'] { background: linear-gradient(180deg,#17a2b8,#0f9aa8); }
+.event-modal-modern .accent[data-type='tache'] { background: linear-gradient(180deg,#007bff,#0056d6); }
+
+.modal-content {
+  background: linear-gradient(180deg,#fff,#fbfdff);
+  flex: 1 1 auto;
+  padding: 18px;
+  border-top-right-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+
+.modal-header { display:flex; gap:12px; align-items:flex-start; }
+.modal-icon { width:48px; height:48px; border-radius:10px; background:rgba(0,0,0,0.06); display:flex; align-items:center; justify-content:center; font-size:20px; color:#fff; }
+.modal-icon .fa-video { color:#17a2b8; }
+.modal-icon .fa-tasks { color:#007bff; }
+
+.type-badge { background:#f1f3fb; color:#334; padding:4px 8px; border-radius:6px; font-size:0.8rem; }
+.status-badge { background:#eef7ff; color:#0b5ed7; padding:4px 8px; border-radius:6px; font-size:0.8rem; }
+
+.modal-body .description { color:#333; margin:8px 0 14px 0; line-height:1.45; }
+.meta-grid { display:flex; gap:18px; }
+.meta-grid .meta-value { font-weight:700; }
+
+.modal-footer { margin-top:8px; }
+.btn-join { background: linear-gradient(90deg,#17a2b8,#0f9aa8); border: none; color: #fff; }
+
+@keyframes modalPop { from { transform: translateY(8px) scale(0.99); opacity:0 } to { transform: translateY(0) scale(1); opacity:1 } }
+
+@media (max-width: 680px) {
+  .modal-content { padding: 12px; }
+  .modal-icon { width:40px; height:40px; }
+}

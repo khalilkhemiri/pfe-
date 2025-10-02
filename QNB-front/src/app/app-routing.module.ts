@@ -42,9 +42,15 @@ const routes: Routes = [
         loadChildren: () => import('./demo/pages/form-elements/form-elements.module').then((m) => m.FormElementsModule)
       },
       {
-        path: 'meeting',
+        path: 'meeting/create',
         loadComponent: () => import('./demo/pages/form-elements/meeting/meeting.component').then((m) => m.MeetingComponent)
       },
+     
+  {
+    path: 'meeting/:roomID',
+    loadComponent: () =>
+      import('./demo/pages/form-elements/join-meeting/join-meeting.component').then(m => m.JoinMeetingComponent)
+  },
       {
         path: 'tables',
         loadChildren: () => import('./demo/pages/tables/tables.module').then((m) => m.TablesModule)
@@ -66,6 +72,14 @@ const routes: Routes = [
         loadComponent: () => import('./demo/pages/stagiaires-tuteur/stagiaires-tuteur.component').then(m => m.StagiairesTuteurComponent)
       },
       {
+        path: 'stagiaires-documents',
+        loadComponent: () => import('./demo/pages/stagiaire-documents/stagiaire-documents.component').then(m => m.StagiaireDocumentsComponent)
+      },
+      {
+        path: 'admin-documents',
+        loadComponent: () => import('./demo/pages/admin-documents/admin-documents.component').then(m => m.AdminDocumentsComponent)
+      },
+      {
         path: 'tuteur-taches-stagiaire',
         loadComponent: () => import('./demo/pages/tuteur-taches-stagiaire/tuteur-taches-stagiaire.component').then(m => m.TuteurTachesStagiaireComponent)
       },
@@ -74,9 +88,10 @@ const routes: Routes = [
         loadComponent: () => import('./demo/pages/chat/chat.component').then(m => m.ChatComponent)
       },
       {
-        path: 'dash',
+        path: 'stagiaire-dash',
         loadComponent: () => import('./demo/pages/stagiaire-dashboard/stagiaire-dashboard.component').then(m => m.StagiaireDashboardComponent)
       },
+      
       {
         path: 'chat/stagiaire',
         loadComponent: () => import('./demo/pages/chat/stagiaire-chat/stagiaire-chat.component').then(m => m.StagiaireChatComponent)

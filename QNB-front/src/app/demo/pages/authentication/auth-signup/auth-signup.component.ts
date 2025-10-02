@@ -50,12 +50,28 @@ export default class AuthSignupComponent {
     this.signupForm = this.fb.group({
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
-      username: ['', [Validators.required, Validators.minLength(4)]],
+      // username: alphanumeric + underscore, min 4
+      username: ['', [Validators.required, Validators.minLength(4), Validators.pattern('^[a-zA-Z0-9_]+$')]],
       email: ['', [Validators.required, Validators.email]],
-      phone: ['', Validators.required],
+      // phone: optional + start with + and 7-15 digits OR plain 7-15 digits
+      phone: ['', [Validators.required, Validators.pattern('^\\+?\\d{7,15}$')]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', Validators.required]
     }, { validators: this.passwordMatchValidator });
+  }
+
+  // Helper getters for template
+  get firstName() { return this.signupForm.get('firstName'); }
+  get lastName() { return this.signupForm.get('lastName'); }
+  get usernameF() { return this.signupForm.get('username'); }
+  get emailF() { return this.signupForm.get('email'); }
+  get phoneF() { return this.signupForm.get('phone'); }
+  get passwordF() { return this.signupForm.get('password'); }
+  get confirmPasswordF() { return this.signupForm.get('confirmPassword'); }
+
+  isControlInvalid(controlName: string) {
+    const c = this.signupForm.get(controlName);
+    return c ? c.invalid && c.touched : false;
   }
 
   passwordMatchValidator(form: FormGroup) {

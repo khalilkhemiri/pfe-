@@ -1,0 +1,80 @@
+<div class="attestation-section mb-4">
+  <div class="attestation-card">
+    <div class="attest-left">
+      <div class="attest-icon"><i class="feather icon-file-text"></i></div>
+      <div>
+        <h4>Attestation de stage (modèle)</h4>
+        <p class="text-muted mb-1">Téléchargez le modèle, signez-le numériquement ou imprimez-le pour signature manuelle, puis uploadez la version signée.</p>
+        <div class="d-flex gap-2 mt-2">
+          <button class="btn btn-primary" (click)="downloadAttestationTemplate()" [disabled]="downloadingTemplate">
+            <i class="feather icon-download"></i>
+            {{ downloadingTemplate ? 'Téléchargement...' : 'Télécharger le modèle' }}
+          </button>
+          <button class="btn btn-outline-secondary" (click)="previewAttestationTemplate()" [disabled]="downloadingTemplate">Prévisualiser</button>
+        </div>
+        <small class="text-muted d-block mt-2">Après signature, utilisez la carte "Attestation de stage" ci‑dessous pour télécharger la version signée.</small>
+        <div *ngIf="templateError" class="text-danger small mt-2">{{ templateError }}</div>
+      </div>
+    </div>
+     <div class="attest-right">
+      <img src="/assets/images/attestation-preview.png" alt="Preview" *ngIf="!downloadingTemplate" style="width:160px;border-radius:6px;object-fit:cover;"/>
+     </div>
+  </div>
+</div>
+
+<!-- Existing documents grid -->
+<div class="documents-grid">
+  <div class="doc-card" *ngFor="let doc of documentTypes">
+    
+    <!-- En-tête -->
+    <div class="doc-header">
+      <div class="doc-icon" *ngIf="!doc.preview">
+        <i class="feather icon-file-text"></i>
+      </div>
+      <div class="doc-preview" *ngIf="doc.preview">
+        <img *ngIf="doc.isImage" [src]="doc.preview" alt="Preview">
+        <div class="file-icon" *ngIf="!doc.isImage">
+          <i class="feather icon-file"></i>
+        </div>
+      </div>
+      <h4>{{ doc.label }}</h4>
+    </div>
+
+    <!-- Zone d'upload -->
+    <div class="doc-body" *ngIf="!doc.file">
+      <label class="upload-btn">
+        <input type="file" (change)="onFileSelected($event, doc)" hidden>
+        <i class="feather icon-upload-cloud"></i> Importer
+      </label>
+      <small class="hint">Formats acceptés : PDF, DOCX, JPG, PNG</small>
+    </div>
+
+    <!-- Fichier uploadé -->
+    <div class="doc-file" *ngIf="doc.file">
+      <div class="file-info">
+        <i class="feather icon-check-circle success" *ngIf="doc.file.status==='uploaded'"></i>
+        <i class="feather icon-clock pending" *ngIf="doc.file.status==='pending'"></i>
+        <i class="feather icon-alert-circle text-danger" *ngIf="doc.file.status==='rejected'"></i>
+        <span class="file-name">{{ doc.file.name }}</span>
+      </div>
+
+      <div *ngIf="doc.errorMessage" class="text-danger small mt-2">{{ doc.errorMessage }}</div>
+
+      <div class="progress" *ngIf="doc.file.status==='pending'">
+        <div class="progress-bar" [style.width.%]="doc.file.progress"></div>
+      </div>
+
+      <div class="file-actions">
+        <a *ngIf="doc.file.url" [href]="doc.file.url" target="_blank" class="btn-icon download">
+          <i class="feather icon-download"></i>
+        </a>
+        <button *ngIf="doc.file.status==='rejected'" class="btn-icon ms-2" (click)="removeRejected(doc)">
+          <i class="feather icon-x"></i>
+        </button>
+        <button *ngIf="doc.file.status!=='rejected'" class="btn-icon danger" (click)="deleteFile(doc)">
+          <i class="feather icon-trash-2"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,4 +1,3 @@
-
 <div class="signup-2steps-wrapper">
   <div class="signup-2steps-card">
     <div class="text-center mb-4">
@@ -20,14 +19,14 @@
               <span class="input-group-text"><i class="feather icon-user"></i></span>
               <input formControlName="firstName" type="text" class="form-control" placeholder="Prénom" />
             </div>
-            <div *ngIf="signupForm.get('firstName')?.invalid && signupForm.get('firstName')?.touched" class="text-danger small">Prénom requis</div>
+            <div *ngIf="isControlInvalid('firstName')" class="text-danger small">Prénom requis</div>
           </div>
           <div class="col-md-6 mb-3">
             <div class="input-group">
               <span class="input-group-text"><i class="feather icon-user"></i></span>
               <input formControlName="lastName" type="text" class="form-control" placeholder="Nom" />
             </div>
-            <div *ngIf="signupForm.get('lastName')?.invalid && signupForm.get('lastName')?.touched" class="text-danger small">Nom requis</div>
+            <div *ngIf="isControlInvalid('lastName')" class="text-danger small">Nom requis</div>
           </div>
         </div>
         <div class="mb-3">
@@ -35,21 +34,21 @@
             <span class="input-group-text"><i class="feather icon-user"></i></span>
             <input formControlName="username" type="text" class="form-control" placeholder="Nom d'utilisateur" />
           </div>
-          <div *ngIf="signupForm.get('username')?.invalid && signupForm.get('username')?.touched" class="text-danger small">Nom d'utilisateur requis</div>
+          <div *ngIf="isControlInvalid('username')" class="text-danger small">Nom d'utilisateur requis (lettres, chiffres, _ , min 4)</div>
         </div>
         <div class="mb-3">
           <div class="input-group">
             <span class="input-group-text"><i class="feather icon-mail"></i></span>
             <input formControlName="email" type="email" class="form-control" placeholder="Email" />
           </div>
-          <div *ngIf="signupForm.get('email')?.invalid && signupForm.get('email')?.touched" class="text-danger small">Email valide requis</div>
+          <div *ngIf="isControlInvalid('email')" class="text-danger small">Email valide requis</div>
         </div>
         <div class="mb-3">
           <div class="input-group">
             <span class="input-group-text"><i class="feather icon-phone"></i></span>
             <input formControlName="phone" type="tel" class="form-control" placeholder="Téléphone" />
           </div>
-          <div *ngIf="signupForm.get('phone')?.invalid && signupForm.get('phone')?.touched" class="text-danger small">Téléphone requis</div>
+          <div *ngIf="isControlInvalid('phone')" class="text-danger small">Téléphone invalide (ex: +33612345678)</div>
         </div>
         <button type="button" class="btn btn-primary btn-lg w-100 shadow mb-4" (click)="nextStep()" [disabled]="!signupForm.get('firstName')?.valid || !signupForm.get('lastName')?.valid || !signupForm.get('username')?.valid || !signupForm.get('email')?.valid || !signupForm.get('phone')?.valid">Suivant</button>
       </ng-container>

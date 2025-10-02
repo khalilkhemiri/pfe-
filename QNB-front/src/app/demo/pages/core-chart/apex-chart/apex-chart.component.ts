@@ -33,12 +33,16 @@ export default class ApexChartComponent implements OnInit {
 
   ngOnInit() {
     this.stagiaireId = this.authService.getCurrentUserId();
-    this.http.get<any[]>(`http://192.168.5.128:31615/api/taches/stagiaire/${this.stagiaireId}`).subscribe(data => {
+    this.http.get<any[]>(`http://localhost:8080/api/taches/stagiaire/${this.stagiaireId}`).subscribe(data => {
       data.forEach(task => {
         const column = this.statuts.find(s => s.value === task.statut);
         if (column) column.tasks.push(task);
       });
     });
+  }
+
+  get totalTasks(): number {
+    return this.statuts.reduce((acc, s) => acc + (s.tasks ? s.tasks.length : 0), 0);
   }
 
   onDrop(event: CdkDragDrop<any[]>, newStatus: string) {
@@ -57,7 +61,7 @@ export default class ApexChartComponent implements OnInit {
     // Update task status via API
     const updatedTask = { ...task, statut: newStatus };
 
-    this.http.put(`http://192.168.5.128:31615/api/taches/${task.id}`, updatedTask).subscribe({
+    this.http.put(`http://localhost:8080/api/taches/${task.id}`, updatedTask).subscribe({
       next: () => console.log('Tâche mise à jour.'),
       error: err => console.error('Erreur lors de la mise à jour :', err)
     });

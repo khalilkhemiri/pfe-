@@ -20,7 +20,7 @@ export interface User {
 
 @Injectable({ providedIn: 'root' })
 export class ChatService {
-  private apiUrl = 'http://192.168.5.128:31615/api/chat';
+  private apiUrl = 'http://localhost:8080/api/chat';
   private stompClient: Client | null = null;
   private messagesSubject = new Subject<ChatMessage>();
   public messages$ = this.messagesSubject.asObservable();
@@ -36,7 +36,7 @@ export class ChatService {
 
   private initializeWebSocket() {
     this.stompClient = new Client({
-      brokerURL: 'ws://192.168.5.128:31615/ws',
+      brokerURL: 'ws://localhost:8080/ws',
       connectHeaders: {
         login: 'guest',
         passcode: 'guest',

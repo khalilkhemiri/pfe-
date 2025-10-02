@@ -19,14 +19,14 @@ export interface Stagiaire {
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://192.168.5.128:31615/api/auth/signup';  // Remplace par ton URL d'API
-  private apiUrl1 = 'http://192.168.5.128:31615/api/auth';  // Remplace par ton URL d'API
+  private apiUrl = 'http://localhost:8080/api/auth/signup';  // Remplace par ton URL d'API
+  private apiUrl1 = 'http://localhost:8080/api/auth';  // Remplace par ton URL d'API
 
   constructor(private http: HttpClient,private router: Router) { }
 
   
   signupWithImage(formData: FormData) {
-    return this.http.post('http://192.168.5.128:31615/api/auth/signup', formData, { responseType: 'text' });
+    return this.http.post('http://localhost:8080/api/auth/signup', formData, { responseType: 'text' });
   }
   
   
@@ -104,5 +104,22 @@ export class AuthService {
 
   getAllTuteurs(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl1}/tuteurs`);
+  }
+
+  // Assigner un rôle à un utilisateur (admin)
+  assignRole(id: string, role: string): Observable<string> {
+    // Envoie une requête PUT /assign-role/{id}?role={role}
+    const url = `${this.apiUrl1}/assign-role/${id}?role=${role}`;
+    // Inform HttpClient that we expect a text response by specifying the generic and responseType
+    return this.http.put<string>(url, {}, { responseType: 'text' as 'json' });
+  }
+  createMeeting(meetingData: any) {
+  return this.http.post('http://localhost:8080/api/meetings', meetingData);
+}
+
+  // Supprimer un utilisateur (admin)
+  deleteUser(id: string): Observable<string> {
+    const url = `${this.apiUrl1}/delete/${id}`;
+    return this.http.delete<string>(url, { responseType: 'text' as 'json' });
   }
 }

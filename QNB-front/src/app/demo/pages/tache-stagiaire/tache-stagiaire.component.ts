@@ -83,7 +83,7 @@ export class TacheStagiaireComponent implements OnInit {
   }
 
   loadTaches() {
-    this.http.get<Tache[]>(`http://192.168.5.128:31615/api/taches/stagiaire/${this.stagiaireId}`).subscribe({
+    this.http.get<Tache[]>(`http://localhost:8080/api/taches/stagiaire/${this.stagiaireId}`).subscribe({
       next: (data) => {
         this.taches = data;
         this.applyFilter();

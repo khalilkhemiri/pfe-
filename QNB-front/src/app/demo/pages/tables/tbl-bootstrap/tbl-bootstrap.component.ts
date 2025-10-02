@@ -18,40 +18,80 @@ export default class TblBootstrapComponent {
   calendarApp: any;
   isDarkMode: boolean = false;
 
+  // Event modal state
+  showEventModal = false;
+  modalEvent: any = null;
+
   constructor(private http: HttpClient, private authService: AuthService) {}
 
   ngOnInit(): void {
-    this.loadTasks();
+    this.loadEvents();
   }
 
-  loadTasks(): void {
+  loadEvents(): void {
     const stagiaireId = this.authService.getCurrentUserId();
-    this.http.get<any[]>(`http://192.168.5.128:31615/api/taches/stagiaire/${stagiaireId}`)
+
+    // 1. Récupérer les tâches
+    this.http.get<any[]>(`http://localhost:8080/api/taches/stagiaire/${stagiaireId}`)
       .subscribe((taches) => {
-        const events = taches.map(tache => ({
-          id: tache.id,
-          title: tache.titre,
-          start: tache.dateDebut.replace('""',''), 
+        const taskEvents = taches.map(tache => ({
+          id: `tache-${tache.id}`,
+          title: `📌 ${tache.titre}`,
+          start: tache.dateDebut.replace('""',''),
           end: tache.dateFin.replace('""',''),
           backgroundColor: this.mapStatutToColor(tache.statut),
           description: tache.description || '',
           extendedProps: {
+            type: 'tache',
             statut: tache.statut
           }
         }));
 
-        this.calendarApp = createCalendar({
-          events: events,
-          views: [createViewMonthGrid(), createViewWeek(), createViewMonthAgenda()],
-          defaultView: 'month',
-          firstDayOfWeek: 1,
-          theme: this.isDarkMode ? 'dark' : 'light',
-          callbacks: {
-            onEventClick: (event) => {
-              this.showEventDetails(event);
+        // 2. Récupérer les meetings
+        this.http.get<any[]>(`http://localhost:8080/api/meetings/stagiaire/${stagiaireId}`)
+          .subscribe((meetings) => {
+            function toTaskFormat(dateString: string): string {
+              const d = new Date(dateString);
+              const pad = (n: number) => n.toString().padStart(2, '0');
+              return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
             }
-          }
-        });
+
+            const meetingEvents = meetings.map(meeting => {
+              const start = toTaskFormat(meeting.date);
+              const endDate = new Date(meeting.date);
+              endDate.setHours(endDate.getHours() + 1); // +1h
+              const end = toTaskFormat(endDate.toISOString());
+              return {
+                id: `meeting-${meeting.id}`,
+                title: `📅 ${meeting.title}`,
+                start: start,
+                end: end,
+                backgroundColor: '#17a2b8',
+                description: `Lien: ${meeting.meetingLink}`,
+                extendedProps: {
+                  type: 'meeting',
+                  link: meeting.meetingLink
+                }
+              };
+            });
+
+            // 3. Fusionner les deux
+            const events = [...taskEvents, ...meetingEvents];
+
+            // 4. Créer le calendrier
+            this.calendarApp = createCalendar({
+              events: events,
+              views: [createViewMonthGrid(), createViewWeek(), createViewMonthAgenda()],
+              defaultView: 'month',
+              firstDayOfWeek: 1,
+              theme: this.isDarkMode ? 'dark' : 'light',
+              callbacks: {
+                onEventClick: (event) => {
+                  this.showEventDetails(event);
+                }
+              }
+            });
+          });
       });
   }
 
@@ -62,14 +102,31 @@ export default class TblBootstrapComponent {
     }
   }
 
+  formatDateForDisplay(dateInput: string | Date): string {
+    if (!dateInput) return '-';
+    const d = new Date(dateInput);
+    return d.toLocaleString();
+  }
+
   showEventDetails(event: any): void {
-    alert(`
-      Titre: ${event.title}
-      Statut: ${event.extendedProps.statut}
-      Début: ${new Date(event.start).toLocaleString()}
-      Fin: ${new Date(event.end).toLocaleString()}
-      ${event.description ? `Description: ${event.description}` : ''}
-    `);
+    // Normalize event object (Schedule-X event wrappers can vary)
+    const ev = event?.extendedProps ? event : event; // keep as-is
+    this.modalEvent = {
+      type: ev.extendedProps?.type || 'tache',
+      title: ev.title || ev.name || 'Événement',
+      description: ev.description || ev.extendedProps?.description || '',
+      start: ev.start || ev.extendedProps?.start || null,
+      end: ev.end || ev.extendedProps?.end || null,
+      link: ev.extendedProps?.link || ev.extendedProps?.meetingLink || null,
+      statut: ev.extendedProps?.statut || null,
+    };
+
+    this.showEventModal = true;
+  }
+
+  closeEventModal(): void {
+    this.showEventModal = false;
+    this.modalEvent = null;
   }
 
   mapStatutToColor(statut: string): string {
