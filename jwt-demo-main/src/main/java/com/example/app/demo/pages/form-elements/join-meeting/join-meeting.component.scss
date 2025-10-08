@@ -1,8 +1,0 @@
-/* meetings list styles */
-.meetings-container { padding: 12px; }
-.meeting-list { display: grid; grid-template-columns: repeat(auto-fit,minmax(260px,1fr)); gap: 12px; margin-top: 12px; }
-.meeting-card { background:#fff;border-radius:10px;padding:12px;border:1px solid #eef2ff;box-shadow:0 6px 18px rgba(11,18,40,0.03); }
-.meeting-main { display:flex;justify-content:space-between;align-items:center;gap:12px; }
-.meeting-actions button { padding:6px 10px; }
-.meeting-footer { font-size:0.85rem;color:#6c757d;margin-top:8px; }
-.loading { color:#6c757d; }
