@@ -1,0 +1,223 @@
+<div class="historique-container">
+  <div class="historique-background"></div>
+  
+  <div class="historique-content">
+    <!-- Header -->
+    <div class="historique-header">
+      <div class="header-info">
+        <mat-icon class="header-icon">history</mat-icon>
+        <div class="header-text">
+          <h1>Historique des Évaluations</h1>
+          <p>Suivi des performances et progression du stagiaire</p>
+        </div>
+      </div>
+      <div class="stagiaire-info" *ngIf="stagiaire">
+        <div class="stagiaire-avatar">
+          <img *ngIf="stagiaire.image" [src]="stagiaire.image" [alt]="stagiaire.username">
+          <div *ngIf="!stagiaire.image" class="avatar-placeholder">
+            {{ stagiaire.username.charAt(0).toUpperCase() }}
+          </div>
+        </div>
+        <div class="stagiaire-details">
+          <h3>{{ stagiaire.username }}</h3>
+          <p>{{ stagiaire.email }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Statistiques -->
+    <div class="stats-section">
+      <div class="stats-grid">
+        <mat-card class="stat-card">
+          <div class="stat-content">
+            <div class="stat-icon primary">
+              <mat-icon>analytics</mat-icon>
+            </div>
+            <div class="stat-info">
+              <h3>{{ stats.moyenneGlobale.toFixed(1) }}/10</h3>
+              <p>Moyenne Globale</p>
+            </div>
+          </div>
+        </mat-card>
+
+        <mat-card class="stat-card">
+          <div class="stat-content">
+            <div class="stat-icon success">
+              <mat-icon>assessment</mat-icon>
+            </div>
+            <div class="stat-info">
+              <h3>{{ stats.nombreEvaluations }}</h3>
+              <p>Évaluations</p>
+            </div>
+          </div>
+        </mat-card>
+
+        <mat-card class="stat-card">
+          <div class="stat-content">
+            <div class="stat-icon warning">
+              <mat-icon>star</mat-icon>
+            </div>
+            <div class="stat-info">
+              <h3>{{ stats.meilleureNote.toFixed(1) }}/10</h3>
+              <p>Meilleure Note</p>
+            </div>
+          </div>
+        </mat-card>
+
+        <mat-card class="stat-card">
+          <div class="stat-content">
+            <div class="stat-icon info">
+              <mat-icon [style.color]="getEvolutionColor()">{{ getEvolutionIcon() }}</mat-icon>
+            </div>
+            <div class="stat-info">
+              <h3 [style.color]="getEvolutionColor()">{{ stats.evolution | titlecase }}</h3>
+              <p>Évolution</p>
+            </div>
+          </div>
+        </mat-card>
+      </div>
+    </div>
+
+    <!-- Onglets -->
+    <mat-tab-group class="tabs-container" [(selectedIndex)]="selectedTab">
+      <mat-tab label="Historique">
+        <div class="tab-content">
+          <mat-card class="table-card">
+            <div class="card-header">
+              <h2>Liste des Évaluations</h2>
+              <div class="card-actions">
+                <button mat-raised-button color="primary" (click)="exporterRapport()">
+                  <mat-icon>download</mat-icon>
+                  Exporter
+                </button>
+              </div>
+            </div>
+
+            <div class="table-container">
+              <table mat-table [dataSource]="evaluations" class="evaluations-table">
+                <!-- Date Column -->
+                <ng-container matColumnDef="date">
+                  <th mat-header-cell *matHeaderCellDef>Date</th>
+                  <td mat-cell *matCellDef="let element">
+                    {{ element.dateEvaluation | date:'dd/MM/yyyy' }}
+                  </td>
+                </ng-container>
+
+                <!-- Moyenne Column -->
+                <ng-container matColumnDef="moyenne">
+                  <th mat-header-cell *matHeaderCellDef>Moyenne</th>
+                  <td mat-cell *matCellDef="let element">
+                    <div class="moyenne-display">
+                      <span class="moyenne-value">{{ element.moyenneGlobale }}/10</span>
+                      <div class="stars">
+                        <mat-icon *ngFor="let star of [1,2,3,4,5]" 
+                                 [class.filled]="star <= Math.round(element.moyenneGlobale/2)"
+                                 class="star-icon">
+                          {{ star <= Math.round(element.moyenneGlobale/2) ? 'star' : 'star_border' }}
+                        </mat-icon>
+                      </div>
+                    </div>
+                  </td>
+                </ng-container>
+
+                <!-- Statut Column -->
+                <ng-container matColumnDef="statut">
+                  <th mat-header-cell *matHeaderCellDef>Statut</th>
+                  <td mat-cell *matCellDef="let element">
+                    <mat-chip [style.background-color]="getStatutColor(element.statut)" 
+                             class="statut-chip">
+                      <mat-icon>{{ getStatutIcon(element.statut) }}</mat-icon>
+                      {{ element.statut | titlecase }}
+                    </mat-chip>
+                  </td>
+                </ng-container>
+
+                <!-- Commentaire Column -->
+                <ng-container matColumnDef="commentaire">
+                  <th mat-header-cell *matHeaderCellDef>Commentaire</th>
+                  <td mat-cell *matCellDef="let element">
+                    <div class="commentaire-cell">
+                      <p class="commentaire-text">{{ element.commentaire | slice:0:100 }}{{ element.commentaire.length > 100 ? '...' : '' }}</p>
+                    </div>
+                  </td>
+                </ng-container>
+
+                <!-- Actions Column -->
+                <ng-container matColumnDef="actions">
+                  <th mat-header-cell *matHeaderCellDef>Actions</th>
+                  <td mat-cell *matCellDef="let element">
+                    <button mat-icon-button color="primary" (click)="voirDetails(element)">
+                      <mat-icon>visibility</mat-icon>
+                    </button>
+                  </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+              </table>
+            </div>
+          </mat-card>
+        </div>
+      </mat-tab>
+
+      <mat-tab label="Graphiques">
+        <div class="tab-content">
+          <div class="charts-grid">
+            <mat-card class="chart-card">
+              <div class="card-header">
+                <h3>Évolution des Notes</h3>
+              </div>
+              <div class="chart-placeholder">
+                <mat-icon>show_chart</mat-icon>
+                <p>Graphique d'évolution des notes</p>
+                <small>Intégration avec Chart.js ou ApexCharts</small>
+              </div>
+            </mat-card>
+
+            <mat-card class="chart-card">
+              <div class="card-header">
+                <h3>Répartition par Critères</h3>
+              </div>
+              <div class="chart-placeholder">
+                <mat-icon>pie_chart</mat-icon>
+                <p>Graphique en secteurs par critères</p>
+                <small>Intégration avec Chart.js ou ApexCharts</small>
+              </div>
+            </mat-card>
+          </div>
+        </div>
+      </mat-tab>
+
+      <mat-tab label="Détails">
+        <div class="tab-content">
+          <mat-card class="details-card">
+            <div class="card-header">
+              <h3>Analyse Détaillée</h3>
+            </div>
+            <div class="details-content">
+              <div class="detail-section">
+                <h4>Points Forts</h4>
+                <ul>
+                  <li>Bonne maîtrise des technologies</li>
+                  <li>Respect des délais</li>
+                  <li>Communication efficace</li>
+                </ul>
+              </div>
+              <div class="detail-section">
+                <h4>Axes d'Amélioration</h4>
+                <ul>
+                  <li>Autonomie dans la résolution de problèmes</li>
+                  <li>Documentation du code</li>
+                </ul>
+              </div>
+              <div class="detail-section">
+                <h4>Recommandations</h4>
+                <p>Continuer dans cette voie en développant l'autonomie et la documentation.</p>
+              </div>
+            </div>
+          </mat-card>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+</div> 

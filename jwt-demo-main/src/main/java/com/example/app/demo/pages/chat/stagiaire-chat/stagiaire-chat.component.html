@@ -1,0 +1,38 @@
+<div class="chat-container">
+  <div class="chat-header">
+    <div class="user-info" *ngIf="tuteur">
+      <img [src]="tuteur.avatar" [alt]="tuteur.name" class="avatar">
+      <div class="user-details">
+        <h3>{{ tuteur.name }}</h3>
+        <span class="status">Tuteur</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="chat-messages" #messageContainer>
+    <div *ngFor="let message of messages" 
+         [ngClass]="{'message': true, 'sent': message.sender.id === currentUser.id, 'received': message.sender.id !== currentUser.id}">
+      <div class="message-content">
+        <div class="message-text">{{ message.content }}</div>
+        <div class="message-time">{{ formatTime(message.timestamp) }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chat-input">
+    <form (ngSubmit)="sendMessage()" #messageForm="ngForm">
+      <div class="input-group">
+        <input type="text" 
+               [(ngModel)]="newMessage" 
+               name="message" 
+               placeholder="Écrivez votre message..."
+               class="form-control">
+        <button type="submit" 
+                class="btn btn-primary" 
+                [disabled]="!newMessage.trim()">
+          Envoyer
+        </button>
+      </div>
+    </form>
+  </div>
+</div> 

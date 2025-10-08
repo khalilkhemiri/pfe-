@@ -1,0 +1,85 @@
+<div class="kanban-controls">
+  <input type="text" [(ngModel)]="searchTerm" placeholder="Rechercher une tâche...">
+  <select [(ngModel)]="filterStatus">
+    <option value="all">Toutes</option>
+    <option value="pending">En attente</option>
+    <option value="valid">Validées</option>
+    <option value="rejected">Rejetées</option>
+  </select>
+</div>
+<div *ngIf="toastMsg" class="toast-msg">{{ toastMsg }}</div>
+<div class="kanban-board">
+  <div *ngFor="let tache of filteredTaches()" class="kanban-card" [ngClass]="getCardClass(tache)">
+    <div class="card-header">
+      <h3>{{ tache.titre }}</h3>
+      <span class="badge" [ngClass]="getBadgeClass(tache)">{{ getStatusLabel(tache) }}</span>
+    </div>
+    <div class="card-body">
+      <p><strong>Description de la tâche :</strong> {{ tache.description }}</p>
+      <ng-container *ngIf="tache.rapportRendu; else noRendu">
+        <div class="rendu-section">
+          <p><strong>Commentaire du stagiaire :</strong> {{ tache.rapportRendu.description || 'Aucun commentaire.' }}</p>
+          <div *ngIf="tache.rapportRendu.fichierUrl">
+            <strong>Fichier rendu :</strong>
+            <a [href]="tache.rapportRendu.fichierUrl" target="_blank" (click)="$event.stopPropagation()">Voir le fichier</a>
+          </div>
+          <div>
+            <strong>Date de rendu :</strong> {{ tache.rapportRendu.dateRendu | date:'dd/MM/yyyy HH:mm' }}
+          </div>
+        </div>
+      </ng-container>
+      <ng-template #noRendu>
+        <p class="text-muted">Aucun rendu envoyé par le stagiaire.</p>
+      </ng-template>
+      <div class="kanban-actions">
+        <button class="btn btn-link" (click)="openSlideOver(tache); $event.stopPropagation()">Voir le rendu</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Slide-over (panneau latéral) -->
+<div class="slide-over-backdrop" *ngIf="selectedTache" (click)="closeSlideOver()"></div>
+<div class="slide-over" *ngIf="selectedTache">
+  <div class="slide-content">
+    <button class="close-btn" (click)="closeSlideOver()">&times;</button>
+    <div class="slide-header">
+      <h2>{{ selectedTache.titre }}</h2>
+      <span class="badge" [ngClass]="getBadgeClass(selectedTache)">{{ getStatusLabel(selectedTache) }}</span>
+    </div>
+    <hr>
+    <div class="slide-section">
+      <i class="fas fa-tasks icon-detail"></i>
+      <span><strong>Description de la tâche :</strong> {{ selectedTache.description }}</span>
+    </div>
+    <div class="slide-section" *ngIf="selectedTache.rapportRendu">
+      <i class="fas fa-comment-dots icon-detail"></i>
+      <span><strong>Commentaire du stagiaire :</strong></span>
+      <div class="rendu-comment" [ngClass]="{'empty': !selectedTache.rapportRendu.description}">
+        {{ selectedTache.rapportRendu.description || 'Aucun commentaire.' }}
+      </div>
+      <div *ngIf="selectedTache.rapportRendu.fichierUrl" class="rendu-file">
+        <i class="fas fa-paperclip icon-detail"></i>
+        <strong>Fichier rendu :</strong>
+        <a [href]="selectedTache.rapportRendu.fichierUrl" target="_blank">Voir le fichier</a>
+        <div *ngIf="isImageFile(selectedTache.rapportRendu.fichierUrl)">
+          <img [src]="selectedTache.rapportRendu.fichierUrl" alt="Aperçu du rendu" class="rendu-image-preview">
+        </div>
+      </div>
+      <div class="slide-section">
+        <i class="fas fa-calendar-alt icon-detail"></i>
+        <strong>Date de rendu :</strong> {{ selectedTache.rapportRendu.dateRendu | date:'dd/MM/yyyy HH:mm' }}
+      </div>
+    </div>
+    <div *ngIf="selectedTache.rapportRendu?.valide === null" class="actions">
+      <textarea [(ngModel)]="selectedTache.commentaireTuteur" placeholder="Commentaire (optionnel)"></textarea>
+      <button (click)="validerRendu()">Valider</button>
+      <button (click)="rejeterRendu()">Rejeter</button>
+    </div>
+    <div *ngIf="selectedTache.rapportRendu?.valide !== null && selectedTache.rapportRendu?.commentaireEncadrant">
+      <hr>
+      <i class="fas fa-user-check icon-detail"></i>
+      <strong>Commentaire du tuteur :</strong>
+      <p>{{ selectedTache.rapportRendu.commentaireEncadrant }}</p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,51 @@
+<div class="taches-container">
+  <div class="header">
+    <h1>Mes Tâches</h1>
+    <div class="filters">
+      <mat-form-field>
+        <mat-label>Filtrer par statut</mat-label>
+        <mat-select [(ngModel)]="selectedFilter" (selectionChange)="applyFilter()">
+          <mat-option value="all">Toutes</mat-option>
+          <mat-option value="pending">En cours</mat-option>
+          <mat-option value="completed">Terminées</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <div class="taches-grid">
+    <mat-card *ngFor="let tache of filteredTaches" class="tache-card" [class.urgent]="isUrgent(tache)">
+      <mat-card-header>
+        <mat-card-title>{{ tache.titre }}</mat-card-title>
+        <mat-card-subtitle>
+          <span class="date">Date de début: {{ tache.dateDebut | date:'dd/MM/yyyy HH:mm' }}</span>
+          <span class="date">Date limite: {{ tache.dateFin | date:'dd/MM/yyyy HH:mm' }}</span>
+          <span class="status" [ngClass]="getStatusClass(tache)">
+            {{ getStatusText(tache) }}
+          </span>
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <p class="description">{{ tache.description }}</p>
+        <div class="task-info">
+          <span class="created-at">Créée le: {{ tache.createdAt | date:'dd/MM/yyyy' }}</span>
+          <span *ngIf="tache.rapportRendu" class="rendu-info">
+            Rendu soumis le: {{ tache.rapportRendu.dateSoumission | date:'dd/MM/yyyy HH:mm' }}
+          </span>
+        </div>
+      </mat-card-content>
+
+      <mat-card-actions>
+        <button mat-raised-button color="primary" (click)="showDetail(tache)">
+          <mat-icon>visibility</mat-icon>
+          Détails
+        </button>
+        <button mat-raised-button color="accent" (click)="showDetail(tache)" *ngIf="tache.statut !== StatutTache.TERMINEE">
+          <mat-icon>upload</mat-icon>
+          Rendu
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

@@ -1,0 +1,151 @@
+<div class="evaluation-form-container">
+  <div class="form-background"></div>
+  
+  <div class="form-content">
+    <!-- Header -->
+    <div class="form-header">
+      <div class="header-info">
+        <mat-icon class="header-icon">grade</mat-icon>
+        <div class="header-text">
+          <h1>Évaluation Stagiaire</h1>
+          <p>Évaluez les performances de votre stagiaire</p>
+        </div>
+      </div>
+      <div class="stagiaire-card" *ngIf="stagiaire">
+        <div class="stagiaire-avatar">
+          <img *ngIf="stagiaire.image" [src]="stagiaire.image" [alt]="stagiaire.username">
+          <div *ngIf="!stagiaire.image" class="avatar-placeholder">
+            {{ stagiaire.username.charAt(0).toUpperCase() }}
+          </div>
+        </div>
+        <div class="stagiaire-info">
+          <h3>{{ stagiaire.username }}</h3>
+          <p>{{ stagiaire.email }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="loading-container">
+      <mat-icon class="loading-icon">hourglass_empty</mat-icon>
+      <p>Chargement du stagiaire...</p>
+    </div>
+
+    <!-- Formulaire d'évaluation -->
+    <form *ngIf="!loading && formReady" [formGroup]="evaluationForm" (ngSubmit)="onSubmit()" class="evaluation-form">
+      
+      <!-- Critères d'évaluation -->
+      <div class="criteres-section">
+        <h2>Critères d'Évaluation</h2>
+        <p class="section-description">Évaluez chaque critère sur une échelle de 1 à 10</p>
+        
+        <div class="criteres-grid">
+          <mat-card *ngFor="let critere of criteres" class="critere-card">
+            <div class="critere-header">
+              <div class="critere-icon">
+                <mat-icon>{{ critere.icone }}</mat-icon>
+              </div>
+              <div class="critere-info">
+                <h3>{{ critere.nom }}</h3>
+                <p>{{ critere.description }}</p>
+                <span class="poids">Poids: {{ critere.poids }}%</span>
+              </div>
+            </div>
+            
+            <div class="critere-evaluation">
+              <div class="note-display">
+                <span class="note-value">{{ getNote(critere.id) }}/10</span>
+              </div>
+              
+              <div class="stars-container">
+                <div class="stars">
+                  <mat-icon 
+                    *ngFor="let star of getStars(10)" 
+                    [class.filled]="isStarFilled(star, getNote(critere.id))"
+                    (click)="setNote(critere.id, star)"
+                    class="star-icon">
+                    {{ isStarFilled(star, getNote(critere.id)) ? 'star' : 'star_border' }}
+                  </mat-icon>
+                </div>
+                <span class="note-label">Cliquez sur les étoiles pour noter</span>
+              </div>
+            </div>
+          </mat-card>
+        </div>
+      </div>
+
+      <!-- Résumé de l'évaluation -->
+      <div class="resume-section">
+        <mat-card class="resume-card">
+          <div class="resume-header">
+            <h3>Résumé de l'Évaluation</h3>
+            <div class="moyenne-display">
+              <span class="moyenne-value">{{ getMoyenneGlobale() }}/10</span>
+              <mat-chip [style.background-color]="getStatutColor(getStatut(getMoyenneGlobale()))" 
+                       class="statut-chip">
+                {{ getStatut(getMoyenneGlobale()) | titlecase }}
+              </mat-chip>
+            </div>
+          </div>
+          
+          <div class="resume-details">
+            <div class="detail-item" *ngFor="let critere of criteres">
+              <span class="critere-name">{{ critere.nom }}</span>
+              <span class="critere-note">{{ getNote(critere.id) }}/10</span>
+            </div>
+          </div>
+        </mat-card>
+      </div>
+
+      <!-- Commentaires -->
+      <div class="commentaires-section">
+        <h2>Commentaires et Recommandations</h2>
+        
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Commentaire Général</mat-label>
+          <textarea 
+            matInput 
+            formControlName="commentaire" 
+            rows="4"
+            placeholder="Donnez un commentaire général sur les performances du stagiaire...">
+          </textarea>
+          <mat-icon matSuffix>comment</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Recommandations (Optionnel)</mat-label>
+          <textarea 
+            matInput 
+            formControlName="recommandations" 
+            rows="3"
+            placeholder="Suggestions d'amélioration ou recommandations...">
+          </textarea>
+          <mat-icon matSuffix>lightbulb</mat-icon>
+        </mat-form-field>
+      </div>
+
+      <!-- Actions -->
+      <div class="form-actions">
+        <button 
+          type="button" 
+          mat-stroked-button 
+          (click)="router.navigate(['/evaluation/dashboard'])"
+          class="cancel-btn">
+          <mat-icon>arrow_back</mat-icon>
+          Annuler
+        </button>
+        
+        <button 
+          type="submit" 
+          mat-raised-button 
+          color="primary" 
+          [disabled]="evaluationForm.invalid || submitting"
+          class="submit-btn">
+          <mat-icon *ngIf="!submitting">save</mat-icon>
+          <mat-icon *ngIf="submitting" class="spinning">refresh</mat-icon>
+          {{ submitting ? 'Enregistrement...' : 'Enregistrer l\'Évaluation' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div> 

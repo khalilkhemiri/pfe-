@@ -1,0 +1,62 @@
+<div class="signup-2steps-wrapper">
+  <div class="signup-2steps-card">
+    <form (ngSubmit)="onSubmit(loginForm)" #loginForm="ngForm" autocomplete="off">
+      <div class="text-center mb-4">
+        <i class="feather icon-unlock auth-icon" style="font-size: 2.5rem;"></i>
+        <h2 class="mb-4 font-weight-bold">Connexion</h2>
+      </div>
+      <div class="mb-3">
+        <div class="input-group">
+          <span class="input-group-text"><i class="feather icon-mail"></i></span>
+          <input
+            type="email"
+            class="form-control"
+            name="username"
+            [(ngModel)]="username"
+            placeholder="Email"
+            required
+            #usernameField="ngModel"
+          />
+        </div>
+        <div *ngIf="usernameField.invalid && usernameField.touched" class="text-danger small">Email requis et doit être valide</div>
+      </div>
+      <div class="mb-3 position-relative">
+        <div class="input-group">
+          <span class="input-group-text"><i class="feather icon-lock"></i></span>
+          <input
+            [type]="showPassword ? 'text' : 'password'"
+            class="form-control"
+            name="password"
+            [(ngModel)]="password"
+            placeholder="Mot de passe"
+            required
+            minlength="6"
+            #passwordField="ngModel"
+          />
+          <span class="input-group-text password-toggle" (click)="showPassword = !showPassword" style="cursor:pointer;">
+            <i class="feather" [ngClass]="showPassword ? 'icon-eye-off' : 'icon-eye'"></i>
+          </span>
+        </div>
+        <div *ngIf="passwordField.invalid && passwordField.touched" class="text-danger small">Mot de passe requis (min 6 caractères)</div>
+      </div>
+      <div class="form-group text-start mb-3">
+        <div class="checkbox checkbox-fill d-inline">
+          <input type="checkbox" name="checkbox-fill-1" id="checkbox-fill-a1" checked />
+          <label for="checkbox-fill-a1" class="cr">Se souvenir de moi</label>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary btn-lg w-100 shadow mb-3" [disabled]="loginForm.invalid">
+        Se connecter
+      </button>
+      <p *ngIf="errorMessage" class="text-danger text-center">{{ errorMessage }}</p>
+      <p class="mb-2 text-muted text-center">
+        Mot de passe oublié ?
+        <a [routerLink]="['/auth/reset-password']">Réinitialiser</a>
+      </p>
+      <p class="mb-0 text-muted text-center">
+        Pas encore de compte ?
+        <a [routerLink]="['/auth/signup']">Créer un compte</a>
+      </p>
+    </form>
+  </div>
+</div>

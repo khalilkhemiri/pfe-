@@ -1,0 +1,66 @@
+<div class="chat-container">
+  <!-- Sidebar with user list -->
+  <div class="chat-sidebar">
+    <div class="sidebar-header">
+      <h2>Messages</h2>
+    </div>
+    <div class="user-list">
+      <div *ngFor="let user of users" 
+           class="user-item" 
+           [class.active]="selectedUser?.id === user.id"
+           (click)="selectUser(user)">
+        <div class="user-avatar">
+          <img [src]="user.avatar || 'assets/images/avatars/default.jpg'" [alt]="user.name">
+        </div>
+        <div class="user-info">
+          <h3>{{user.name}}</h3>
+          <p class="last-message">Dernier message...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main chat area -->
+  <div class="chat-main" *ngIf="selectedUser">
+    <!-- Chat header -->
+    <div class="chat-header">
+      <div class="user-info">
+        <img [src]="selectedUser.avatar || 'assets/images/avatars/default.jpg'" [alt]="selectedUser.name">
+        <h3>{{selectedUser.name}}</h3>
+      </div>
+    </div>
+
+    <!-- Messages area -->
+    <div class="messages-container">
+      <div *ngFor="let message of messages" 
+           class="message" 
+           [class.sent]="message.sender.id === currentUser.id"
+           [class.received]="message.sender.id !== currentUser.id">
+        <div class="message-content">
+          <p>{{message.content}}</p>
+          <span class="message-time">{{formatTime(message.timestamp)}}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Message input -->
+    <div class="message-input">
+      <input type="text" 
+             [(ngModel)]="newMessage" 
+             placeholder="Écrivez votre message..."
+             (keyup.enter)="sendMessage()">
+      <button (click)="sendMessage()">
+        <i class="fas fa-paper-plane"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- No chat selected state -->
+  <div class="no-chat-selected" *ngIf="!selectedUser">
+    <div class="welcome-message">
+      <i class="fas fa-comments"></i>
+      <h2>Bienvenue dans le chat</h2>
+      <p>Sélectionnez une conversation pour commencer</p>
+    </div>
+  </div>
+</div> 

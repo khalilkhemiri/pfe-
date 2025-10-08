@@ -12,6 +12,8 @@ spec:
       labels:
         app: pfe-frontend
     spec:
+      nodeSelector:
+        kubernetes.io/hostname: worker1-virtual-machine
       containers:
         - name: pfe-frontend
           image: khalilkh/pfe-front:latest

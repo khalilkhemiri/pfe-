@@ -1,0 +1,51 @@
+<main class="main">
+  <div class="content">
+    <div class="calendar-controls">
+      <button class="theme-toggle" (click)="toggleDarkMode()">
+        {{ isDarkMode ? 'Mode Clair' : 'Mode Sombre' }}
+      </button>
+    </div>
+    <sx-calendar *ngIf="calendarApp" [calendarApp]="calendarApp"></sx-calendar>
+  </div>
+
+  <!-- Event Modal -->
+  <div *ngIf="showEventModal" class="event-modal-overlay modern" role="dialog" aria-modal="true" aria-labelledby="modalEventTitle">
+    <div class="event-modal-modern">
+      <div class="accent" [attr.data-type]="modalEvent?.type"></div>
+      <div class="modal-content">
+        <header class="modal-header d-flex align-items-start">
+          <div class="modal-icon">
+            <i class="fas" [ngClass]="modalEvent?.type === 'meeting' ? 'fa-video' : 'fa-tasks'"></i>
+          </div>
+          <div style="flex:1 1 auto;">
+            <h3 id="modalEventTitle" class="mb-1">{{ modalEvent?.title }}</h3>
+            <div class="d-flex gap-2 align-items-center">
+              <span class="type-badge">{{ modalEvent?.type === 'meeting' ? 'Meeting' : 'Tâche' }}</span>
+              <span *ngIf="modalEvent?.statut" class="status-badge">{{ modalEvent?.statut }}</span>
+            </div>
+          </div>
+          <button class="btn-close" (click)="closeEventModal()" aria-label="Fermer">×</button>
+        </header>
+
+        <div class="modal-body">
+          <p class="description" *ngIf="modalEvent?.description">{{ modalEvent?.description }}</p>
+
+          <div class="meta-grid">
+            <div>
+              <small class="muted">Début</small>
+              <div class="meta-value">{{ formatDateForDisplay(modalEvent?.start) }}</div>
+            </div>
+            <div>
+              <small class="muted">Fin</small>
+              <div class="meta-value">{{ formatDateForDisplay(modalEvent?.end) }}</div>
+            </div>
+          </div>
+        </div>
+
+        <footer class="modal-footer d-flex justify-content-between align-items-center">
+          
+        </footer>
+      </div>
+    </div>
+  </div>
+</main>

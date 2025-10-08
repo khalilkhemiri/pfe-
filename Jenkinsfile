@@ -2,8 +2,8 @@ pipeline {
   agent any
 
   environment {
-    SONAR_TOKEN = credentials('sonarqube-token')
-    DOCKER_CREDENTIALS = credentials('dockerhub')
+    SONAR_TOKEN = credentials('sonartoken')
+    DOCKER_CREDENTIALS = credentials('dockerhub-token')
     IMAGE_NAME_BACK = "khalilkh/pfe-back"
     IMAGE_NAME_FRONT = "khalilkh/pfe-front"
   }
@@ -11,7 +11,7 @@ pipeline {
   stages {
     stage('Checkout') {
       steps {
-        git branch: 'main', credentialsId: 'github-token', url: 'https://github.com/khalilkhemiri/pfe-.git'
+        git branch: 'main', url: 'https://github.com/khalilkhemiri/pfe-.git'
       }
     }
 
@@ -34,12 +34,21 @@ pipeline {
         }
       }
     }
-
+    stage('SonarQube Analysis') {
+      steps {
+        dir('jwt-demo-main') {
+          withSonarQubeEnv('SonarQube') {
+            echo "🔎 Running SonarQube analysis..."
+            sh './mvnw sonar:sonar -Dsonar.login=$SONAR_TOKEN'
+          }
+        }
+      }
+    }
     stage('Docker Build & Push Backend') {
       steps {
         script {
           echo "🐳 Building and pushing backend Docker image..."
-          docker.withRegistry('https://index.docker.io/v1/', 'dockerhub') {
+          docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-token') {
             dir('jwt-demo-main') {
               def image = docker.build("${IMAGE_NAME_BACK}:${env.BUILD_NUMBER}")
               image.push()
@@ -54,7 +63,7 @@ pipeline {
       steps {
         script {
           echo "🧱 Building and pushing frontend Docker image..."
-          docker.withRegistry('https://index.docker.io/v1/', 'dockerhub') {
+          docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-token') {
             dir('QNB-front') {
               def image = docker.build("${IMAGE_NAME_FRONT}:${env.BUILD_NUMBER}", "--build-arg BUILD_DIR=dist/datta-able-free-angular-admin-template .")
               image.push()
@@ -65,31 +74,7 @@ pipeline {
       }
     }
 
-    stage('Kubernetes Deploy') {
-      steps {
-        script {
-          echo "🚀 Deploying backend and frontend to Kubernetes..."
-
-          def kubeConfig = 'export KUBECONFIG=~/k3s.yaml'
-
-          // Apply manifests
-          sh "${kubeConfig} && kubectl apply -f K8s/backend-deployment.yml"
-          sh "${kubeConfig} && kubectl apply -f K8s/backend-service.yml"
-          sh "${kubeConfig} && kubectl apply -f K8s/frontend-deployment.yml"
-          sh "${kubeConfig} && kubectl apply -f K8s/frontend-service.yml"
-          sh "${kubeConfig} && kubectl apply -f K8s/ingress.yaml"
-
-          // 🔁 Forcer le restart pour appliquer la nouvelle image
-          sh "${kubeConfig} && kubectl rollout restart deployment pfe-backend"
-          sh "${kubeConfig} && kubectl rollout restart deployment pfe-frontend"
-
-          // 🧪 Vérification (optionnel)
-          sh "${kubeConfig} && kubectl get pods"
-          sh "${kubeConfig} && kubectl get svc"
-          sh "${kubeConfig} && kubectl get ingress"
-        }
-      }
-    }
+    
   }
 
   post {

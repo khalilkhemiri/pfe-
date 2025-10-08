@@ -1,0 +1,189 @@
+<div class="evaluation-dashboard">
+  <!-- Header Section -->
+  
+
+  <!-- Stats Cards -->
+  <div class="stats-grid">
+    <mat-card class="stat-card">
+      <div class="stat-content">
+        <div class="stat-icon excellent">
+          <mat-icon>star</mat-icon>
+        </div>
+        <div class="stat-info">
+          <h3>{{ getExcellentCount() }}</h3>
+          <p>Excellents</p>
+          <small>{{ getExcellentCount() > 0 ? (getExcellentCount() / stagiaires.length * 100).toFixed(0) : 0 }}%</small>
+        </div>
+      </div>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <div class="stat-content">
+        <div class="stat-icon good">
+          <mat-icon>thumb_up</mat-icon>
+        </div>
+        <div class="stat-info">
+          <h3>{{ getBonCount() }}</h3>
+          <p>Bons</p>
+          <small>{{ getBonCount() > 0 ? (getBonCount() / stagiaires.length * 100).toFixed(0) : 0 }}%</small>
+        </div>
+      </div>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <div class="stat-content">
+        <div class="stat-icon average">
+          <mat-icon>trending_up</mat-icon>
+        </div>
+        <div class="stat-info">
+          <h3>{{ getMoyenCount() }}</h3>
+          <p>Moyens</p>
+          <small>{{ getMoyenCount() > 0 ? (getMoyenCount() / stagiaires.length * 100).toFixed(0) : 0 }}%</small>
+        </div>
+      </div>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <div class="stat-content">
+        <div class="stat-icon poor">
+          <mat-icon>warning</mat-icon>
+        </div>
+        <div class="stat-info">
+          <h3>{{ getInsuffisantCount() }}</h3>
+          <p>À améliorer</p>
+          <small>{{ getInsuffisantCount() > 0 ? (getInsuffisantCount() / stagiaires.length * 100).toFixed(0) : 0 }}%</small>
+        </div>
+      </div>
+    </mat-card>
+  </div>
+
+  <!-- Stagiaires Table -->
+  <mat-card class="table-card">
+    <div class="card-header">
+      <h2>Liste des Stagiaires ({{ stagiaires.length }})</h2>
+      <div class="card-actions">
+        <button mat-icon-button (click)="refreshData()" [disabled]="loading">
+          <mat-icon>{{ loading ? 'hourglass_empty' : 'refresh' }}</mat-icon>
+        </button>
+        <button mat-icon-button>
+          <mat-icon>filter_list</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <div class="table-container">
+      <div *ngIf="loading" class="loading-container">
+        <mat-icon class="loading-icon">hourglass_empty</mat-icon>
+        <p>Chargement des données...</p>
+      </div>
+
+      <table mat-table [dataSource]="stagiairesAffiches" class="evaluation-table" *ngIf="!loading">
+        <!-- Stagiaire Column -->
+        <ng-container matColumnDef="stagiaire">
+          <th mat-header-cell *matHeaderCellDef>Stagiaire</th>
+          <td mat-cell *matCellDef="let element">
+            <div class="stagiaire-info">
+              <div class="avatar-container">
+                <img *ngIf="element.image" [src]="element.image" [alt]="element.username" class="avatar">
+                <div *ngIf="!element.image" class="avatar-placeholder">
+                  {{ element.username.charAt(0).toUpperCase() }}
+                </div>
+              </div>
+              <div class="stagiaire-details">
+                <h4>{{ element.username }}</h4>
+                <p>{{ element.email }}</p>
+              </div>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Moyenne Column -->
+        <ng-container matColumnDef="moyenne">
+          <th mat-header-cell *matHeaderCellDef>Performance</th>
+          <td mat-cell *matCellDef="let element">
+            <div class="moyenne-display">
+              <span class="moyenne-value">{{ element.moyenneGlobale }}/10</span>
+              <div class="stars">
+                <mat-icon *ngFor="let star of getStars(element.moyenneGlobale)" 
+                         [class.filled]="isStarFilled(star, element.moyenneGlobale)"
+                         class="star-icon">
+                  {{ getStarIcon(star, element.moyenneGlobale) }}
+                </mat-icon>
+              </div>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Tâches Column -->
+        <ng-container matColumnDef="taches">
+          <th mat-header-cell *matHeaderCellDef>Tâches</th>
+          <td mat-cell *matCellDef="let element">
+            <div class="taches-info">
+              <div class="taches-progress">
+                <mat-progress-bar 
+                  [value]="getProgressPercentage(element)"
+                  [color]="getProgressPercentage(element) >= 80 ? 'primary' : getProgressPercentage(element) >= 60 ? 'accent' : 'warn'">
+                </mat-progress-bar>
+                <div class="taches-details">
+                  <span class="taches-text">{{ element.tachesTerminees }}/{{ element.nombreTaches }}</span>
+                  <span class="taches-percentage">({{ getProgressPercentage(element).toFixed(0) }}%)</span>
+                </div>
+              </div>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Dernière Évaluation Column -->
+        <ng-container matColumnDef="derniereEvaluation">
+          <th mat-header-cell *matHeaderCellDef>Dernière Activité</th>
+          <td mat-cell *matCellDef="let element">
+            <span class="date-text" [class.no-activity]="element.derniereEvaluation === 'Aucune tâche'">
+              {{ element.derniereEvaluation }}
+            </span>
+          </td>
+        </ng-container>
+
+        <!-- Statut Column -->
+        <ng-container matColumnDef="statut">
+          <th mat-header-cell *matHeaderCellDef>Statut</th>
+          <td mat-cell *matCellDef="let element">
+            <mat-chip [style.background-color]="getStatutColor(element.statut)" 
+                     class="statut-chip">
+              <mat-icon>{{ getStatutIcon(element.statut) }}</mat-icon>
+              {{ element.statut | titlecase }}
+            </mat-chip>
+          </td>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let element">
+            <div class="actions-buttons">
+              <button mat-icon-button 
+                      color="primary" 
+                      (click)="evaluerStagiaire(element)"
+                      matTooltip="Évaluer le stagiaire">
+                <mat-icon>grade</mat-icon>
+              </button>
+              <button mat-icon-button 
+                      color="accent" 
+                      (click)="voirHistorique(element)"
+                      matTooltip="Voir l'historique">
+                <mat-icon>history</mat-icon>
+              </button>
+            </div>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+
+      <div *ngIf="!loading && stagiaires.length === 0" class="no-data">
+        <mat-icon>people_outline</mat-icon>
+        <p>Aucun stagiaire trouvé</p>
+      </div>
+    </div>
+  </mat-card>
+</div>
