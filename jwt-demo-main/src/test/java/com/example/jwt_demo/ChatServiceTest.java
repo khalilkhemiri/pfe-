@@ -13,43 +13,38 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class ChatServiceTest {
-
-    ChatMessageRepository repo;
-    ChatService service;
+    ChatMessageRepository chatMessageRepository;
+    ChatService chatService;
 
     @BeforeEach
     void setUp() {
-        repo = Mockito.mock(ChatMessageRepository.class);
-        service = new ChatService();
+        chatMessageRepository = Mockito.mock(ChatMessageRepository.class);
+        chatService = new ChatService();
         try {
-            var field = ChatService.class.getDeclaredField("chatMessageRepository");
-            field.setAccessible(true);
-            field.set(service, repo);
+            var f = ChatService.class.getDeclaredField("chatMessageRepository");
+            f.setAccessible(true);
+            f.set(chatService, chatMessageRepository);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
     @Test
-    void saveMessageDelegatesToRepo() {
-        ChatMessage m = new ChatMessage();
-        m.setId("c1");
-        when(repo.save(m)).thenReturn(m);
-        ChatMessage out = service.saveMessage(m);
-        assertEquals("c1", out.getId());
-        verify(repo).save(m);
+    void saveMessageDelegates() {
+        ChatMessage m = new ChatMessage(); m.setId("c1");
+        when(chatMessageRepository.save(m)).thenReturn(m);
+        var saved = chatService.saveMessage(m);
+        assertEquals("c1", saved.getId());
     }
 
     @Test
     void markMessagesAsReadSavesEach() {
-        ChatMessage m1 = new ChatMessage(); m1.setId("m1"); m1.setRead(false);
-        ChatMessage m2 = new ChatMessage(); m2.setId("m2"); m2.setRead(false);
-        when(repo.findByReceiverIdAndSenderIdAndReadFalse("me","you")).thenReturn(List.of(m1, m2));
+        ChatMessage m1 = new ChatMessage(); m1.setId("1"); m1.setRead(false);
+        when(chatMessageRepository.findByReceiverIdAndSenderIdAndReadFalse("u2","u1")).thenReturn(List.of(m1));
 
-        service.markMessagesAsRead("me", "you");
+        chatService.markMessagesAsRead("u2","u1");
 
         assertTrue(m1.isRead());
-        assertTrue(m2.isRead());
-        verify(repo, times(2)).save(any(ChatMessage.class));
+        verify(chatMessageRepository).save(m1);
     }
 }

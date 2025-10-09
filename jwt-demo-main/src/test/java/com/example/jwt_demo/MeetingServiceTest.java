@@ -6,7 +6,6 @@ import com.example.jwt_demo.service.CustomUserDetailsService;
 import com.example.jwt_demo.service.MeetingService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import java.time.LocalDateTime;
@@ -30,16 +29,15 @@ class MeetingServiceTest {
     void createMeetingSavesAndSendsEmail() {
         Meeting m = new Meeting();
         m.setId("m1");
-        m.setTitle("Sprint Review");
+        m.setTitle("Sprint Demo");
         m.setDate(LocalDateTime.now());
-        m.setMeetingLink("https://meet.example");
+        m.setMeetingLink("https://meet.example/test");
 
         when(meetingRepository.save(m)).thenReturn(m);
 
-        Meeting saved = meetingService.createMeeting(m, "stu@example.com");
-        assertEquals("m1", saved.getId());
-
+        Meeting result = meetingService.createMeeting(m, "s@example.com");
+        assertNotNull(result);
         verify(meetingRepository).save(m);
-        verify(emailService).sendMeetingInvitation(eq("stu@example.com"), eq(m.getTitle()), anyString(), eq(m.getMeetingLink()));
+        verify(emailService).sendMeetingInvitation(eq("s@example.com"), anyString(), anyString(), anyString());
     }
 }

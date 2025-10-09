@@ -25,7 +25,6 @@ public class DocumentService {
         // Upload vers Cloudinary
         Map uploadResult = cloudinaryService.upload(file);
         String url = uploadResult.get("secure_url").toString();
-        String publicId = uploadResult.get("public_id").toString();
 
         // Sauvegarde en base
         DocumentEntity doc = new DocumentEntity();

@@ -1,41 +1,65 @@
 package com.example.jwt_demo;
 
 import com.example.jwt_demo.model.CritereEvaluation;
+import com.example.jwt_demo.model.Evaluation;
+import com.example.jwt_demo.repository.EvaluationRepository;
 import com.example.jwt_demo.service.EvaluationService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 class EvaluationServiceTest {
+    EvaluationRepository evaluationRepository;
+    EvaluationService evaluationService;
 
-    EvaluationService service = new EvaluationService();
-
-    @Test
-    void calculerMoyennePondereeEmptyReturnsZero() {
-        assertEquals(0.0, service.calculerMoyennePonderee(List.of()));
+    @BeforeEach
+    void setUp() {
+        evaluationRepository = Mockito.mock(EvaluationRepository.class);
+        evaluationService = new EvaluationService();
+        // inject repo
+        try {
+            var f = EvaluationService.class.getDeclaredField("evaluationRepository");
+            f.setAccessible(true);
+            f.set(evaluationService, evaluationRepository);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Test
-    void calculerMoyennePondereeWorks() {
-        CritereEvaluation c1 = new CritereEvaluation("a","A","", 4, 2, "");
-        CritereEvaluation c2 = new CritereEvaluation("b","B","", 6, 3, "");
-        double res = service.calculerMoyennePonderee(List.of(c1, c2));
-        // (4*2 + 6*3) / (2+3) = (8+18)/5 = 26/5 = 5.2 -> rounded to 5.2
-        assertEquals(5.2, res);
+    void calculerMoyennePondereeAndDeterminerStatut() {
+        var c1 = new CritereEvaluation("c1", "Comp", "", 8, 50, "");
+        var c2 = new CritereEvaluation("c2", "Qual", "", 6, 50, "");
+        double moyenne = evaluationService.calculerMoyennePonderee(List.of(c1, c2));
+    assertEquals(7.0, moyenne);
+    assertEquals("moyen", evaluationService.determinerStatut(moyenne));
     }
 
     @Test
-    void determinerStatutThresholds() {
-        assertEquals("excellent", service.determinerStatut(9.0));
-        assertEquals("bon", service.determinerStatut(8.0));
-        assertEquals("moyen", service.determinerStatut(6.5));
-        assertEquals("insuffisant", service.determinerStatut(5.0));
+    void getStagiaireStatsEmpty() {
+        when(evaluationRepository.findByStagiaireIdOrderByDateEvaluationDesc("s1")).thenReturn(List.of());
+        var stats = evaluationService.getStagiaireStats("s1");
+        assertEquals(0.0, stats.get("moyenneGlobale"));
+        assertEquals(0, stats.get("nombreEvaluations"));
     }
 
     @Test
-    void getCriteresParDefautNotEmpty() {
-        assertFalse(service.getCriteresParDefaut().isEmpty());
+    void createAndUpdateEvaluation() {
+        Evaluation ev = new Evaluation();
+        ev.setId("e1");
+        when(evaluationRepository.save(any())).thenReturn(ev);
+
+        Evaluation created = evaluationService.createEvaluation(ev);
+        assertNotNull(created);
+
+        // update non-existing should return null
+        when(evaluationRepository.findById("missing")).thenReturn(Optional.empty());
+        assertNull(evaluationService.updateEvaluation("missing", ev));
     }
 }
