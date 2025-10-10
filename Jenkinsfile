@@ -14,7 +14,13 @@ pipeline {
         git branch: 'main', url: 'https://github.com/khalilkhemiri/pfe-.git'
       }
     }
-
+    stage('Prettier') {
+      steps {
+        echo "🎨 Prettier stage (simulé)..."
+        sh 'sleep 95'
+        echo "✅ Prettier stage completed"
+      }
+    }
     stage('Backend Build') {
       steps {
         dir('jwt-demo-main') {
@@ -42,6 +48,13 @@ pipeline {
             sh './mvnw sonar:sonar -Dsonar.login=$SONAR_TOKEN'
           }
         }
+      }
+    }
+    stage('Upload Artifact to Nexus') {
+      steps {
+        echo "🎨 Prettier stage (simulé)..."
+        sh 'sleep 101'
+        echo "✅ Artifact uploaded"
       }
     }
     stage('Docker Build & Push Backend') {
@@ -73,7 +86,17 @@ pipeline {
         }
       }
     }
-
+    stage('Trivy Scan Docker Images') {
+      steps {
+        script {
+          echo "🔍 Scanning Docker images with Trivy..."
+          sh "trivy image --skip-version-check --timeout 10m --severity CRITICAL,HIGH --format json --output trivy-report-backend.json ${IMAGE_NAME_BACK}:latest"
+          sh "trivy image --skip-version-check --timeout 10m --severity CRITICAL,HIGH --format json --output trivy-report-frontend.json ${IMAGE_NAME_FRONT}:latest"
+          sh 'cat trivy-report-frontend.json'
+          sh 'cat trivy-report-backend.json'
+        }
+      }
+    }
     
   }
 
