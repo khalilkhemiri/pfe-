@@ -64,4 +64,60 @@ class CustomUserDetailsServiceTest {
         service.sendAdminNotification("new@example.com");
         verify(mailSender).send(any(SimpleMailMessage.class));
     }
+
+    @Test
+    void sendTacheAssignedNotificationSendsMail() {
+        service.sendTacheAssignedNotification("stagiaire@example.com", "Tâche importante");
+        verify(mailSender).send(any(SimpleMailMessage.class));
+    }
+
+    @Test
+    void sendMeetingInvitationSendsMail() {
+        service.sendMeetingInvitation("stagiaire@example.com", "Réunion hebdomadaire", "2024-01-15 10:00", "https://meet.example.com/123");
+        verify(mailSender).send(any(SimpleMailMessage.class));
+    }
+
+    @Test
+    void sendAccountValidatedNotificationSendsMail() {
+        service.sendAccountValidatedNotification("user@example.com");
+        verify(mailSender).send(any(SimpleMailMessage.class));
+    }
+
+    @Test
+    void sendAdminNotificationWithNullEmail() {
+        // Should not throw exception even with null email
+        assertDoesNotThrow(() -> service.sendAdminNotification(null));
+        verify(mailSender).send(any(SimpleMailMessage.class));
+    }
+
+    @Test
+    void sendTacheAssignedNotificationWithEmptyTitre() {
+        service.sendTacheAssignedNotification("stagiaire@example.com", "");
+        verify(mailSender).send(any(SimpleMailMessage.class));
+    }
+
+    @Test
+    void sendMeetingInvitationWithNullParameters() {
+        // Should not throw exception even with null parameters
+        assertDoesNotThrow(() -> service.sendMeetingInvitation(null, null, null, null));
+        verify(mailSender).send(any(SimpleMailMessage.class));
+    }
+
+    @Test
+    void sendAccountValidatedNotificationWithEmptyEmail() {
+        service.sendAccountValidatedNotification("");
+        verify(mailSender).send(any(SimpleMailMessage.class));
+    }
+
+    @Test
+    void loadUserByUsernameWithEmptyUsername() {
+        when(userRepository.findByUsername("")).thenReturn(null);
+        assertThrows(UsernameNotFoundException.class, () -> service.loadUserByUsername(""));
+    }
+
+    @Test
+    void loadUserByUsernameWithNullUsername() {
+        when(userRepository.findByUsername(null)).thenReturn(null);
+        assertThrows(UsernameNotFoundException.class, () -> service.loadUserByUsername(null));
+    }
 }
