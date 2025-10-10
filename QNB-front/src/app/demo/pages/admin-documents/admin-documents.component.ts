@@ -58,7 +58,7 @@ export class AdminDocumentsComponent implements OnInit {
   }
 
   loadDocuments(stagiaireId: string) {
-    this.http.get<DocumentEntity[]>(`http://localhost:8080/api/documents/stagiaire/${stagiaireId}`).subscribe(docs => {
+    this.http.get<DocumentEntity[]>(`http://192.168.136.130:31615/api/documents/stagiaire/${stagiaireId}`).subscribe(docs => {
       this.documents = docs || [];
     });
   }
@@ -82,7 +82,7 @@ export class AdminDocumentsComponent implements OnInit {
 
   deleteDocument(doc: DocumentEntity) {
     if (!doc.publicId) return;
-    this.http.delete(`http://localhost:8080/api/documents/${doc.publicId}`).subscribe(() => {
+    this.http.delete(`http://192.168.136.130:31615/api/documents/${doc.publicId}`).subscribe(() => {
       this.documents = this.documents.filter(d => d.publicId !== doc.publicId);
     });
   }

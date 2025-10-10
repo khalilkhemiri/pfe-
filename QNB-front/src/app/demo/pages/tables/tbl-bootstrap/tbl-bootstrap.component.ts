@@ -32,7 +32,7 @@ export default class TblBootstrapComponent {
     const stagiaireId = this.authService.getCurrentUserId();
 
     // 1. Récupérer les tâches
-    this.http.get<any[]>(`http://localhost:8080/api/taches/stagiaire/${stagiaireId}`)
+    this.http.get<any[]>(`http://192.168.136.130:31615/api/taches/stagiaire/${stagiaireId}`)
       .subscribe((taches) => {
         const taskEvents = taches.map(tache => ({
           id: `tache-${tache.id}`,
@@ -48,7 +48,7 @@ export default class TblBootstrapComponent {
         }));
 
         // 2. Récupérer les meetings
-        this.http.get<any[]>(`http://localhost:8080/api/meetings/stagiaire/${stagiaireId}`)
+        this.http.get<any[]>(`http://192.168.136.130:31615/api/meetings/stagiaire/${stagiaireId}`)
           .subscribe((meetings) => {
             function toTaskFormat(dateString: string): string {
               const d = new Date(dateString);

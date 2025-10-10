@@ -19,14 +19,14 @@ export interface Stagiaire {
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:8080/api/auth/signup';  // Remplace par ton URL d'API
-  private apiUrl1 = 'http://localhost:8080/api/auth';  // Remplace par ton URL d'API
+  private apiUrl = 'http://192.168.136.130:31615/api/auth/signup';  // Remplace par ton URL d'API
+  private apiUrl1 = 'http://192.168.136.130:31615/api/auth';  // Remplace par ton URL d'API
 
   constructor(private http: HttpClient,private router: Router) { }
 
   
   signupWithImage(formData: FormData) {
-    return this.http.post('http://localhost:8080/api/auth/signup', formData, { responseType: 'text' });
+    return this.http.post('http://192.168.136.130:31615/api/auth/signup', formData, { responseType: 'text' });
   }
   
   
@@ -86,7 +86,7 @@ export class AuthService {
   }
 
   getStagiaireById(id: string): Observable<any> {
-    return this.http.get<any>(`http://localhost:8080/api/auth/stagiaire/${id}`);
+    return this.http.get<any>(`http://192.168.136.130:31615/api/auth/stagiaire/${id}`);
   }
 
   // Méthode pour obtenir l'ID de l'utilisateur connecté
@@ -114,7 +114,7 @@ export class AuthService {
     return this.http.put<string>(url, {}, { responseType: 'text' as 'json' });
   }
   createMeeting(meetingData: any) {
-  return this.http.post('http://localhost:8080/api/meetings', meetingData);
+  return this.http.post('http://192.168.136.130:31615/api/meetings', meetingData);
 }
 
   // Supprimer un utilisateur (admin)

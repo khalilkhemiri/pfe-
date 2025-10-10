@@ -52,7 +52,7 @@ export class StagiaireDocumentsComponent implements OnInit {
 
   // Charger les documents existants
   loadDocuments() {
-    this.http.get<any[]>(`http://localhost:8080/api/documents/stagiaire/${this.stagiaireId}`)
+    this.http.get<any[]>(`http://192.168.136.130:31615/api/documents/stagiaire/${this.stagiaireId}`)
       .subscribe(docs => {
         docs.forEach(d => {
           const docType = this.documentTypes.find(dt => dt.key === d.type);
@@ -119,7 +119,7 @@ export class StagiaireDocumentsComponent implements OnInit {
     formData.append('type', doc.key);
     formData.append('stagiaireId', this.stagiaireId);
 
-    this.http.post('http://localhost:8080/api/documents/upload', formData, {
+    this.http.post('http://192.168.136.130:31615/api/documents/upload', formData, {
       reportProgress: true,
       observe: 'events'
     }).subscribe(event => {
@@ -138,7 +138,7 @@ export class StagiaireDocumentsComponent implements OnInit {
   deleteFile(doc: DocumentType) {
     if (!doc.file?.publicId) return;
 
-    this.http.delete(`http://localhost:8080/api/documents/${doc.file.publicId}`)
+    this.http.delete(`http://192.168.136.130:31615/api/documents/${doc.file.publicId}`)
       .subscribe(() => {
         doc.file = undefined;
         doc.preview = null;

@@ -33,7 +33,7 @@ export interface EvaluationHistorique {
   providedIn: 'root'
 })
 export class EvaluationService {
-  private apiUrl = 'http://localhost:8080/api/evaluations';
+  private apiUrl = 'http://192.168.136.130:31615/api/evaluations';
 
   constructor(private http: HttpClient) { }
 

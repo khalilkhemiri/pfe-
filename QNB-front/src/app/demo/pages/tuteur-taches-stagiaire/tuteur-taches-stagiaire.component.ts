@@ -29,7 +29,7 @@ export class TuteurTachesStagiaireComponent implements OnInit {
   }
 
   loadTaches() {
-    this.http.get<any[]>(`http://localhost:8080/api/taches/stagiaire/${this.stagiaireId}`).subscribe({
+    this.http.get<any[]>(`http://192.168.136.130:31615/api/taches/stagiaire/${this.stagiaireId}`).subscribe({
       next: (data) => { this.taches = data; },
       error: () => { this.toastMsg = 'Erreur lors du chargement des tâches.'; }
     });
@@ -75,7 +75,7 @@ export class TuteurTachesStagiaireComponent implements OnInit {
 
   validerRendu(tache: any = this.selectedTache) {
     const commentaire = tache.commentaireTuteur || '';
-    this.http.put(`http://localhost:8080/api/taches/${tache.id}/rendu/valider`, {}, { params: { commentaire } }).subscribe({
+    this.http.put(`http://192.168.136.130:31615/api/taches/${tache.id}/rendu/valider`, {}, { params: { commentaire } }).subscribe({
       next: () => {
         tache.rapportRendu.valide = true;
         tache.rapportRendu.commentaireEncadrant = commentaire;
@@ -87,7 +87,7 @@ export class TuteurTachesStagiaireComponent implements OnInit {
   }
   rejeterRendu(tache: any = this.selectedTache) {
     const commentaire = tache.commentaireTuteur || '';
-    this.http.put(`http://localhost:8080/api/taches/${tache.id}/rendu/rejeter`, {}, { params: { commentaire } }).subscribe({
+    this.http.put(`http://192.168.136.130:31615/api/taches/${tache.id}/rendu/rejeter`, {}, { params: { commentaire } }).subscribe({
       next: () => {
         tache.rapportRendu.valide = false;
         tache.rapportRendu.commentaireEncadrant = commentaire;

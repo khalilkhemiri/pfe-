@@ -93,7 +93,7 @@ export class DashboardComponent implements OnInit {
     let processedStagiaires = 0;
 
     this.stagiaires.forEach(stagiaire => {
-      this.http.get<any[]>(`http://localhost:8080/api/taches/stagiaire/${stagiaire.id}`).subscribe({
+      this.http.get<any[]>(`http://192.168.136.130:31615/api/taches/stagiaire/${stagiaire.id}`).subscribe({
         next: (taches) => {
           console.log(`Tasks for stagiaire ${stagiaire.id}:`, taches);
           
@@ -222,7 +222,7 @@ export class DashboardComponent implements OnInit {
 
   loadUrgentTasks() {
     this.stagiaires.forEach(stagiaire => {
-      this.http.get<any[]>(`http://localhost:8080/api/taches/stagiaire/${stagiaire.id}`).subscribe({
+      this.http.get<any[]>(`http://192.168.136.130:31615/api/taches/stagiaire/${stagiaire.id}`).subscribe({
         next: (taches) => {
           const urgentTaches = taches
             .filter(tache => {

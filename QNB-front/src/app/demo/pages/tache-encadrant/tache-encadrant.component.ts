@@ -279,7 +279,7 @@ export class TacheEncadrantComponent implements OnInit {
   }
 
   loadStagiaires() {
-    this.http.get<Stagiaire[]>('http://localhost:8080/api/stagiaires').subscribe({
+    this.http.get<Stagiaire[]>('http://192.168.136.130:31615/api/stagiaires').subscribe({
       next: (data) => {
         this.stagiaires = data;
       },
@@ -291,7 +291,7 @@ export class TacheEncadrantComponent implements OnInit {
   }
 
   loadTaches() {
-    this.http.get<Tache[]>('http://localhost:8080/api/taches').subscribe({
+    this.http.get<Tache[]>('http://192.168.136.130:31615/api/taches').subscribe({
       next: (data) => {
         this.taches = data;
         this.applyFilter();

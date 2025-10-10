@@ -58,7 +58,7 @@ export class JoinMeetingComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    const url = `http://localhost:8080/api/meetings/tuteur/${tutorId}`;
+    const url = `http://192.168.136.130:31615/api/meetings/tuteur/${tutorId}`;
     this.http.get<any[]>(url).subscribe({
       next: (data) => {
         this.meetings = data || [];
