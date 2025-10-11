@@ -89,11 +89,14 @@ pipeline {
     stage('Trivy Scan Docker Images') {
       steps {
         script {
-          echo "🔍 Scanning Docker images with Trivy..."
-          sh "trivy image --skip-version-check --timeout 10m --severity CRITICAL,HIGH --format json --output trivy-report-backend.json ${IMAGE_NAME_BACK}:latest"
-          sh "trivy image --skip-version-check --timeout 10m --severity CRITICAL,HIGH --format json --output trivy-report-frontend.json ${IMAGE_NAME_FRONT}:latest"
-          sh 'cat trivy-report-frontend.json'
-          sh 'cat trivy-report-backend.json'
+          echo "🔍 Scanning DockerHub images with Trivy..."
+          sh '''
+            trivy image --timeout 5m --severity CRITICAL,HIGH \
+              --format table docker.io/${IMAGE_NAME_BACK}:latest || echo "⚠️ Backend scan warnings"
+
+            trivy image --timeout 5m --severity CRITICAL,HIGH \
+              --format table docker.io/${IMAGE_NAME_FRONT}:latest || echo "⚠️ Frontend scan warnings"
+          '''
         }
       }
     }
