@@ -183,7 +183,7 @@ export const TUTEUR_ITEMS: NavigationItem[] = [
       
       {
         id: 'forms-element',
-        title: 'Form Elements',
+        title: 'Tache',
         type: 'item',
         url: '/forms/basic',
         classes: 'nav-item',
