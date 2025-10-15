@@ -195,7 +195,7 @@ export const TUTEUR_ITEMS: NavigationItem[] = [
         type: 'item',
         url: '/evaluation/dashboard',
         classes: 'nav-item',
-        icon: 'feather icon-file-text'
+        icon: 'feather icon-star'
       },
        {
         id: 'forms-element',
@@ -203,7 +203,7 @@ export const TUTEUR_ITEMS: NavigationItem[] = [
         type: 'item',
         url: '/meeting/create',
         classes: 'nav-item',
-        icon: 'feather icon-file-text'
+        icon: 'feather icon-video'
       },
       {
         id: 'tables',
