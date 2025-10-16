@@ -130,7 +130,7 @@ public class AuthController {
             }
 
             stagiaire.setTuteurId(tuteur.getId());
-            emailService.sendAccountValidatedNotification(stagiaire.getEmail())
+            emailService.sendAccountValidatedNotification(stagiaire.getEmail());
             userRepository.save(stagiaire);
 
             return ResponseEntity.ok("Tuteur assigné avec succès !");
