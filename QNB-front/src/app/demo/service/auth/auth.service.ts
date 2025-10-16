@@ -125,7 +125,8 @@ export class AuthService {
 
   // Assigner un tuteur à un stagiaire (admin)
   assignTuteur(stagiaireId: string, tuteurId: string): Observable<string> {
-    const url = `${this.apiUrl1}/assign-tuteur/${stagiaireId}/${tuteurId}`;
-    return this.http.put<string>(url, {}, { responseType: 'text' as 'json' });
-  }
+  const url = `${this.apiUrl1}/assign-tuteur/${stagiaireId}/${tuteurId}`;
+  return this.http.post<string>(url, {}, { responseType: 'text' as 'json' });
+}
+
 }
